@@ -5,7 +5,6 @@ import API from '../../API'
 import FixedOverlayLoadingSpinner from "../../FixedOverlayLoadingSpinner"
 
 import ErrorModal from "../../ErrorModal";
-import { UK_COUNTIES } from '../../Constants';
 const LocationCollectionPopup = ({setterFunction, okClickedFunction}) => {
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
     const [message, setMessage] = useState(null);

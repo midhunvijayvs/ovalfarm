@@ -23,8 +23,10 @@ $muted: #5b6b60; // secondary text
 $white: #ffffff;
 
 // Fonts (loaded in public/index.html)
-$font-display: 'Fraunces', Georgia, serif;
-$font-body: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+// Noto Sans fonts draw Malayalam, Kannada and Tamil letters, which Fraunces and Poppins don't have
+$font-indic: 'Noto Sans Malayalam', 'Noto Sans Kannada', 'Noto Sans Tamil';
+$font-display: 'Fraunces', $font-indic, Georgia, serif;
+$font-body: 'Poppins', $font-indic, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
 // Layout
 $container: 1200px;

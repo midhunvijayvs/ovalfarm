@@ -15,6 +15,8 @@ import CookiePolicy from '../pages/CookiePolicy/CookiePolicy';
 import TermsAndConditions from '../pages/TermsAndConditions/TermsAndConditions';
 import InformationSecurityPolicy from '../pages/InformationSecurityPolicy/InformationSecurityPolicy';
 import NoPage from '../pages/NoPage/NoPage';
+import RecipeList from '../pages/Recipes/RecipeList';
+import RecipeDetails from '../pages/Recipes/RecipeDetails';
 
 // Scrolls to the top on every new page, or to a section when the link has a #hash
 const ScrollManager = () => {
@@ -36,6 +38,13 @@ const ScrollManager = () => {
   return null
 }
 
+// Sends /recipes/... (the other spelling) to the same page under /recipies/...
+const RecipesSpellingRedirect = () => {
+  const { pathname } = useLocation()
+  const target = pathname.replace(/^\/recipes/, '/recipies')
+  return <Navigate to={target === '/recipies' || target === '/recipies/' ? '/recipies/list' : target} replace />
+}
+
 const Layout = () => {
   return (
     <>
@@ -47,6 +56,10 @@ const Layout = () => {
           <Route index element={<Navigate to="/home" />} />
           <Route path="home" element={<Home />} />
           <Route path="contact-us" element={<ContactUs />} />
+          <Route path="recipies" element={<Navigate to="/recipies/list" replace />} />
+          <Route path="recipies/list" element={<RecipeList />} />
+          <Route path="recipies/details/:id" element={<RecipeDetails />} />
+          <Route path="recipes/*" element={<RecipesSpellingRedirect />} />
 
           {/* Pages left over from the earlier template, not linked from the menu */}
           <Route path="tools-home" element={<ToolsHome />} />

@@ -636,6 +636,7 @@
 
   .dish-card {
     position: relative;
+    display: block;
     margin: 0;
     aspect-ratio: 4 / 5;
     border-radius: $radius;
@@ -660,7 +661,7 @@
       transform: scale(1.06);
     }
 
-    figcaption {
+    .dish-caption {
       position: absolute;
       left: 20px;
       right: 20px;

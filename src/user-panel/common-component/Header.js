@@ -31,6 +31,8 @@ const Header = () => {
 
   // A link is active when its page (and section, if any) matches the current URL
   const isActive = (to) => {
+    const link = NAV_LINKS.find((item) => item.to === to)
+    if (link && link.section) return location.pathname.startsWith(link.section)
     const [path, hash] = to.split('#')
     if (location.pathname !== path) return false
     return hash ? location.hash === `#${hash}` : !location.hash

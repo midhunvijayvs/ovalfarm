@@ -3,6 +3,7 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom'
 
 import { UserProvider } from "./authentication/pages/UserContext"
+import { LanguageProvider } from "./i18n/LanguageContext"
 
 
 
@@ -38,6 +39,7 @@ function App() {
     <div className="App">
 
       <Router>
+        <LanguageProvider>
         <UserProvider>
           <Routes>
 
@@ -80,6 +82,7 @@ function App() {
 
           </Routes>
         </UserProvider>
+        </LanguageProvider>
       </Router>
 
 

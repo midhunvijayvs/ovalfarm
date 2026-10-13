@@ -2,7 +2,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Home.scss'
 import Icon from './Icon'
-import { HIGHLIGHTS, PRODUCTS, DISHES, BENEFITS } from './homeContent'
+import { HIGHLIGHTS, PRODUCTS, BENEFITS } from './homeContent'
+import { useLanguage } from '../../../i18n/LanguageContext'
+import { useRecipes, recipeLink } from '../Recipes/recipeHelpers'
 import { SITE_INFO } from '../../../siteInfo'
 import { ORDER_LINK } from '../../common-component/navLinks'
 
@@ -54,6 +56,8 @@ const ScrollRow = ({ className, children, label }) => {
 
 const Home = () => {
   useRevealOnScroll()
+  const { recipes } = useRecipes()
+  const { tr } = useLanguage()
 
   // The "4" in FOOD 4 HEALTH spins when you scroll back up
   const [spinFour, setSpinFour] = useState(false)
@@ -163,23 +167,26 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ---------- Recipes ---------- */}
+      {/* ---------- Recipes (from the recipe data in Constants.js) ---------- */}
       <section className='recipes' id='recipes'>
         <div className='section-head row reveal'>
           <div>
             <span className='eyebrow'>Mushroom Dishes</span>
             <h2>Kerala favourites, made with mushrooms</h2>
           </div>
+          <Link to='/recipies/list' className='text-link'>
+            All recipes <Icon name='arrow' size={18} strokeWidth={2.2} />
+          </Link>
         </div>
         <ScrollRow className='reveal' label='Mushroom dishes'>
-          {DISHES.map((dish, index) => (
-            <figure className='dish-card' role='listitem' key={dish.title}>
-              <img src={dish.image} alt={dish.title} loading='lazy' />
-              <figcaption>
+          {recipes.map((recipe, index) => (
+            <Link to={recipeLink(recipe.id)} className='dish-card' role='listitem' key={recipe.id}>
+              <img src={recipe.image} alt={tr(recipe.name)} loading='lazy' />
+              <span className='dish-caption'>
                 <span className='dish-number'>{String(index + 1).padStart(2, '0')}</span>
-                {dish.title}
-              </figcaption>
-            </figure>
+                {tr(recipe.name)}
+              </span>
+            </Link>
           ))}
         </ScrollRow>
       </section>

@@ -1,0 +1,78 @@
+@import '../styles/theme';
+
+.language-selector {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 4px 4px 12px;
+  border-radius: 999px;
+  background: $white;
+  border: 1px solid rgba($green-900, 0.1);
+  box-shadow: $shadow-sm;
+  color: $green-700;
+
+  svg {
+    margin-right: 4px;
+    flex-shrink: 0;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    height: 34px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: $ink;
+    font-family: $font-body;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+      background: $green-50;
+      color: $green-700;
+    }
+
+    &.active {
+      background: $green;
+      color: $white;
+    }
+  }
+
+  // Version for dark or photo backgrounds
+  &.light {
+    background: rgba($white, 0.14);
+    border-color: rgba($white, 0.28);
+    backdrop-filter: blur(8px);
+    color: $white;
+    box-shadow: none;
+
+    button {
+      color: rgba($white, 0.9);
+
+      &:hover {
+        background: rgba($white, 0.16);
+        color: $white;
+      }
+
+      &.active {
+        background: $white;
+        color: $green-700;
+      }
+    }
+  }
+
+  @include mob {
+    padding-left: 10px;
+
+    button {
+      height: 32px;
+      padding: 0 10px;
+      font-size: 13px;
+    }
+  }
+}

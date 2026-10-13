@@ -49,12 +49,7 @@ export const PRODUCTS = [
   },
 ];
 
-export const DISHES = [
-  { title: 'Mushroom Fry', image: `${IMAGES}/home/sec-4-1.jpg` },
-  { title: 'Mushroom Dry Fry', image: `${IMAGES}/home/sec-4-2.jpg` },
-  { title: 'Mushroom Curry', image: `${IMAGES}/home/sec-4-3.webp` },
-  { title: 'Mushroom Upperi', image: `${IMAGES}/home/sec-4-4.jpg` },
-];
+// Mushroom dishes now come from RECIPES in src/Constants.js
 
 export const BENEFITS = [
   { icon: 'shield', title: 'Boosts Immunity', text: 'Beta-glucans in mushrooms stimulate the immune system and help the body fight infections.' },

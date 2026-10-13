@@ -1,6 +1,5 @@
 
 import API from './API';
-import { UK_COUNTIES } from './Constants';
 import { saveAs } from 'file-saver'; // Import file-saver library
 import InvoiceTemplate from './InvoiceTemplate'; 
 import ResumeTemplate from './ResumeTemplate'; 
