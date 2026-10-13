@@ -1,0 +1,1110 @@
+@import '../../../styles/theme';
+
+.about-page {
+  background: $white;
+  color: $ink;
+  font-family: $font-body;
+  overflow-x: clip;
+
+  section {
+    scroll-margin-top: $header-height + 12px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-align: left;
+  }
+
+  p {
+    @include body-text;
+  }
+
+  .eyebrow {
+    @include eyebrow;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    &::before {
+      content: '';
+      width: 22px;
+      height: 2px;
+      border-radius: 2px;
+      background: currentColor;
+    }
+
+    &.light {
+      color: lighten($green, 32%);
+    }
+  }
+
+  .section-head {
+    @include container;
+    margin-bottom: 40px;
+
+    h2 {
+      @include section-title;
+    }
+
+    &.center {
+      text-align: center;
+
+      .eyebrow {
+        justify-content: center;
+      }
+
+      h2 {
+        text-align: center;
+      }
+    }
+
+    @include mob {
+      margin-bottom: 28px;
+    }
+  }
+
+  .btn-primary {
+    @include btn-primary;
+    height: 54px;
+    padding: 0 28px;
+  }
+
+  .btn-outline {
+    @include btn;
+    height: 54px;
+    padding: 0 28px;
+    border-color: rgba($green-700, 0.35);
+    color: $green-700;
+    background: transparent;
+
+    &:hover {
+      border-color: $green;
+      background: $green-50;
+      color: $green-700;
+    }
+  }
+
+  .btn-light {
+    @include btn;
+    height: 52px;
+    padding: 0 26px;
+    background: $white;
+    color: $green-700;
+
+    &:hover {
+      background: $green-50;
+      color: $green-900;
+    }
+  }
+
+  .text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 15px;
+    color: $green-700;
+    text-decoration: none;
+
+    svg {
+      transition: transform 0.2s ease;
+    }
+
+    &:hover svg {
+      transform: translateX(4px);
+    }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+
+    &.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .ring,
+    .art-badge {
+      animation: none !important;
+    }
+  }
+}
+
+// ---------- Hero ----------
+.about-hero {
+  position: relative;
+  padding: 64px 0 0;
+  background:
+    radial-gradient(circle at 90% 10%, rgba($green, 0.14), transparent 45%),
+    $cream;
+
+  .about-hero-inner {
+    @include container;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    align-items: center;
+    gap: 56px;
+
+    @include tab {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+
+  .about-hero-text {
+    h1 {
+      margin: 0 0 18px;
+      font-family: $font-display;
+      font-weight: 600;
+      font-size: clamp(36px, 5vw, 64px);
+      line-height: 1.06;
+      letter-spacing: -0.02em;
+      color: $green-900;
+    }
+
+    p {
+      max-width: 540px;
+      font-size: 17px;
+    }
+  }
+
+  .about-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .about-hero-art {
+    position: relative;
+    height: 440px;
+
+    @include tab {
+      height: 380px;
+      max-width: 560px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @include mob {
+      height: 300px;
+    }
+  }
+
+  .art-photo {
+    position: absolute;
+    overflow: hidden;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-lg;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    &.big {
+      right: 0;
+      top: 0;
+      width: 72%;
+      height: 92%;
+    }
+
+    &.small {
+      left: 0;
+      bottom: 0;
+      width: 44%;
+      height: 50%;
+      border: 6px solid $white;
+    }
+  }
+
+  .art-badge {
+    position: absolute;
+    left: 6%;
+    top: 12%;
+    padding: 14px 20px;
+    border-radius: $radius;
+    background: $green;
+    color: $white;
+    box-shadow: 0 12px 28px rgba($green, 0.35);
+    animation: about-float 5s ease-in-out infinite;
+
+    strong {
+      display: block;
+      font-family: $font-display;
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 1.1;
+    }
+
+    span {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+
+    @include mob {
+      padding: 10px 14px;
+
+      strong {
+        font-size: 19px;
+      }
+    }
+  }
+
+  .about-facts {
+    @include container;
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 48px;
+    margin-bottom: -56px;
+
+    @include tab {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  }
+
+  .about-fact {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    border-radius: $radius;
+    background: $white;
+    border: 1px solid $green-100;
+    box-shadow: $shadow;
+
+    strong {
+      display: block;
+      font-size: 15.5px;
+      color: $green-900;
+    }
+
+    span {
+      display: block;
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: $muted;
+    }
+
+    @include mob {
+      padding: 14px 16px;
+    }
+  }
+
+  .about-fact-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background: $green-100;
+    color: $green-700;
+  }
+}
+
+// ---------- Our story ----------
+.about-story {
+  padding: 140px 0 90px;
+
+  @include tab {
+    padding-top: 110px;
+  }
+
+  @include mob {
+    padding: 96px 0 60px;
+  }
+
+  .about-story-inner {
+    @include container;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 64px;
+
+    @include tab {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+
+  h2 {
+    @include section-title;
+  }
+
+  blockquote {
+    position: relative;
+    margin: 28px 0 0;
+    padding: 22px 24px 22px 28px;
+    border-left: 4px solid $green;
+    border-radius: 0 $radius $radius 0;
+    background: $green-50;
+    font-family: $font-display;
+    font-size: 21px;
+    font-style: italic;
+    line-height: 1.45;
+    color: $green-700;
+  }
+
+  .about-story-text p {
+    font-size: 17px;
+    line-height: 1.75;
+
+    & + p {
+      margin-top: 18px;
+    }
+
+    &:first-child::first-letter {
+      float: left;
+      margin: 6px 10px 0 0;
+      font-family: $font-display;
+      font-size: 64px;
+      font-weight: 600;
+      line-height: 0.85;
+      color: $green;
+    }
+  }
+}
+
+// ---------- Values ----------
+.about-values {
+  padding: 0 0 100px;
+
+  @include mob {
+    padding-bottom: 64px;
+  }
+
+  .value-grid {
+    @include container;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+
+    @include tab {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include mob {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+
+  .value-card {
+    position: relative;
+    padding: 28px 24px;
+    border-radius: $radius-lg;
+    background: $white;
+    border: 1px solid $sand;
+    overflow: hidden;
+    transition: opacity 0.7s ease, transform 0.4s ease, box-shadow 0.3s ease, border-color 0.3s ease !important;
+
+    &:hover {
+      transform: translateY(-6px);
+      box-shadow: $shadow;
+      border-color: $green-100;
+
+      .value-icon {
+        background: $green;
+        color: $white;
+        transform: rotate(-8deg);
+      }
+    }
+
+    h3 {
+      margin: 18px 0 8px;
+      font-family: $font-display;
+      font-size: 21px;
+      font-weight: 600;
+      line-height: 1.25;
+      color: $green-900;
+    }
+
+    p {
+      font-size: 15px;
+    }
+  }
+
+  .value-number {
+    position: absolute;
+    right: 18px;
+    top: 10px;
+    font-family: $font-display;
+    font-size: 54px;
+    font-weight: 700;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px $green-100;
+  }
+
+  .value-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: $green-100;
+    color: $green-700;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  }
+}
+
+// ---------- Flagship ----------
+.about-flagship {
+  @include container;
+  padding-bottom: 100px;
+
+  @include mob {
+    padding-bottom: 64px;
+  }
+
+  .about-flagship-inner {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    align-items: center;
+    gap: 48px;
+    padding: 48px;
+    border-radius: $radius-lg;
+    background:
+      radial-gradient(circle at 0% 0%, rgba($green, 0.35), transparent 50%),
+      $green-900;
+    color: $white;
+
+    @include tab {
+      gap: 32px;
+      padding: 36px;
+    }
+
+    @include mob {
+      grid-template-columns: 1fr;
+      padding: 20px 20px 28px;
+      gap: 24px;
+    }
+  }
+
+  .flagship-image {
+    border-radius: $radius;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+
+    img {
+      display: block;
+      width: 100%;
+      transition: transform 0.6s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.04);
+    }
+  }
+
+  h2 {
+    @include section-title;
+    color: $white;
+  }
+
+  p {
+    margin-top: 12px;
+    color: rgba($white, 0.8);
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba($white, 0.1);
+      border: 1px solid rgba($white, 0.18);
+      font-size: 13.5px;
+      font-weight: 500;
+
+      svg {
+        color: lighten($green, 30%);
+      }
+    }
+  }
+
+  .flagship-next {
+    margin: 20px 0 24px;
+    padding-left: 14px;
+    border-left: 3px solid lighten($green, 20%);
+    font-size: 15px;
+  }
+}
+
+// ---------- Why mushrooms ----------
+.about-mushrooms {
+  padding: 90px 0;
+  background: $cream;
+
+  @include mob {
+    padding: 60px 0;
+  }
+
+  .about-mushrooms-inner {
+    @include container;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    align-items: center;
+    gap: 64px;
+
+    @include tab {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+  }
+
+  .mushroom-photos {
+    position: relative;
+    height: 460px;
+
+    @include mob {
+      height: 320px;
+    }
+  }
+
+  .mushroom-photo {
+    position: absolute;
+    overflow: hidden;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-lg;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+
+    &.p0 {
+      left: 0;
+      top: 0;
+      width: 58%;
+      height: 80%;
+    }
+
+    &.p1 {
+      right: 0;
+      bottom: 0;
+      width: 52%;
+      height: 66%;
+      border: 6px solid $cream;
+    }
+  }
+
+  h2 {
+    @include section-title;
+  }
+
+  .mushroom-text p {
+    margin-top: 14px;
+  }
+
+  .mushroom-facts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 26px 0;
+
+    > div {
+      padding: 16px;
+      border-radius: $radius;
+      background: $white;
+      border: 1px solid $sand;
+    }
+
+    strong {
+      display: flex;
+      align-items: baseline;
+      gap: 3px;
+      font-family: $font-display;
+      font-size: 34px;
+      font-weight: 600;
+      line-height: 1;
+      color: $green;
+
+      small {
+        font-family: $font-body;
+        font-size: 14px;
+        color: $green-700;
+      }
+    }
+
+    span {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      line-height: 1.4;
+      color: $muted;
+    }
+
+    @include mob {
+      gap: 8px;
+
+      > div {
+        padding: 12px 10px;
+      }
+
+      strong {
+        font-size: 26px;
+      }
+
+      span {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+// ---------- How we work ----------
+.about-process {
+  padding: 90px 0;
+
+  @include mob {
+    padding: 60px 0;
+  }
+
+  .about-process-steps {
+    @include container;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+    margin-top: 0;
+    margin-bottom: 0;
+    list-style: none;
+
+    // Line that draws itself across the steps
+    &::before {
+      content: '';
+      position: absolute;
+      top: 34px;
+      left: 12%;
+      right: 12%;
+      height: 2px;
+      background: repeating-linear-gradient(90deg, $green 0 10px, transparent 10px 18px);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1.6s ease 0.3s;
+    }
+
+    &.is-visible::before {
+      transform: none;
+    }
+
+    li {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      transition-delay: calc(0.3s + var(--step) * 0.25s);
+
+      strong {
+        margin-top: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        color: $green-900;
+      }
+
+      > span:last-child {
+        margin-top: 4px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: $muted;
+      }
+    }
+
+    &.is-visible li {
+      opacity: 1;
+      transform: none;
+    }
+
+    @include tab {
+      grid-template-columns: 1fr;
+      max-width: 520px;
+      gap: 18px;
+
+      &::before {
+        top: 34px;
+        bottom: 34px;
+        left: 58px;
+        right: auto;
+        width: 2px;
+        height: auto;
+        background: repeating-linear-gradient(180deg, $green 0 10px, transparent 10px 18px);
+        transform: scaleY(0);
+        transform-origin: top;
+      }
+
+      li {
+        display: grid;
+        grid-template-columns: 68px 1fr;
+        column-gap: 16px;
+        align-items: center;
+        text-align: left;
+
+        .process-dot {
+          grid-row: span 2;
+        }
+
+        strong {
+          margin-top: 0;
+          align-self: end;
+        }
+
+        > span:last-child {
+          align-self: start;
+          margin-top: 2px;
+        }
+      }
+    }
+
+    @include mob {
+      &::before {
+        left: 50px;
+      }
+    }
+  }
+
+  .process-dot {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: $white;
+    border: 2px solid $green;
+    color: $green-700;
+    box-shadow: 0 0 0 8px $green-50;
+  }
+}
+
+// ---------- Where we deliver ----------
+.about-delivery {
+  padding: 0 0 100px;
+
+  @include mob {
+    padding-bottom: 64px;
+  }
+
+  .about-delivery-inner {
+    @include container;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    align-items: center;
+    gap: 64px;
+
+    @include tab {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+
+  // Radar-style rings around the farm
+  .delivery-map {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    max-width: 420px;
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, $green-50 0%, $green-100 70%, transparent 71%);
+
+    .ring {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      border-radius: 50%;
+      border: 2px solid rgba($green, 0.35);
+      animation: about-pulse 3.6s ease-out infinite;
+
+      &.r1 {
+        width: 34%;
+        height: 34%;
+      }
+
+      &.r2 {
+        width: 62%;
+        height: 62%;
+        animation-delay: 1.2s;
+      }
+
+      &.r3 {
+        width: 90%;
+        height: 90%;
+        border-style: dashed;
+        animation-delay: 2.4s;
+      }
+    }
+
+    .delivery-pin {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: $green;
+      color: $white;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 10px 24px rgba($green, 0.4);
+    }
+
+    .delivery-label {
+      position: absolute;
+      right: 6%;
+      top: 18%;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: $white;
+      box-shadow: $shadow;
+      font-size: 14px;
+      font-weight: 700;
+      color: $green-700;
+    }
+
+    @include mob {
+      max-width: 280px;
+    }
+  }
+
+  h2 {
+    @include section-title;
+  }
+
+  .delivery-cards {
+    display: grid;
+    gap: 14px;
+    margin-top: 26px;
+  }
+
+  .delivery-card {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    border-radius: $radius;
+    border: 1px solid $sand;
+    background: $white;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      border-color: $green-100;
+      box-shadow: $shadow-sm;
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 16px;
+      color: $green-900;
+    }
+
+    p {
+      font-size: 14.5px;
+    }
+  }
+
+  .delivery-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background: $green-100;
+    color: $green-700;
+  }
+}
+
+// ---------- Team ----------
+.about-team {
+  padding: 90px 0 100px;
+  background:
+    radial-gradient(circle at 100% 0%, rgba($green, 0.3), transparent 45%),
+    $green-900;
+
+  @include mob {
+    padding: 60px 0 64px;
+  }
+
+  .section-head h2 {
+    color: $white;
+  }
+
+  .team-grid {
+    @include container;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+
+    @include tab {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include mob {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+  }
+
+  .team-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 24px;
+    border-radius: $radius-lg;
+    background: rgba($white, 0.05);
+    border: 1px solid rgba($white, 0.12);
+    text-align: center;
+    transition: opacity 0.7s ease, transform 0.4s ease, background-color 0.3s ease !important;
+
+    &:hover {
+      background: rgba($white, 0.09);
+      transform: translateY(-6px);
+
+      .team-photo {
+        transform: scale(1.04);
+
+        &::before {
+          transform: rotate(180deg);
+        }
+      }
+    }
+
+    h3 {
+      margin: 22px 0 4px;
+      font-family: $font-display;
+      font-size: 24px;
+      font-weight: 600;
+      color: $white;
+      text-align: center;
+    }
+
+    ul {
+      margin: 16px 0 0;
+      padding: 16px 0 0;
+      border-top: 1px solid rgba($white, 0.12);
+      list-style: none;
+
+      li {
+        font-size: 14.5px;
+        line-height: 1.6;
+        color: rgba($white, 0.75);
+
+        & + li {
+          margin-top: 4px;
+        }
+      }
+    }
+  }
+
+  .team-photo {
+    position: relative;
+    width: 168px;
+    height: 168px;
+    padding: 6px;
+    border-radius: 50%;
+    transition: transform 0.4s ease;
+
+    // Rotating gradient ring
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: conic-gradient($green, lighten($green, 30%), $orange, $green);
+      transition: transform 0.8s ease;
+    }
+
+    img {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid $green-900;
+    }
+  }
+
+  .team-role {
+    display: inline-block;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: rgba($green, 0.25);
+    font-size: 13.5px;
+    font-weight: 600;
+    color: lighten($green, 35%);
+  }
+}
+
+// ---------- Animations ----------
+@keyframes about-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes about-pulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+
+  30% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.08);
+    opacity: 0;
+  }
+}

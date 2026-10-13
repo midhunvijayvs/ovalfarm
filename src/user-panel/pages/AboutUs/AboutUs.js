@@ -1,130 +1,236 @@
-import React, { useEffect, useContext } from 'react'
-import $ from 'jquery';
+import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import './AboutUs.scss'
+import Icon from '../Home/Icon'
+import {
+  ABOUT_HERO, QUICK_FACTS, STORY, VALUES, FLAGSHIP, MUSHROOM_STORY, PROCESS, TEAM,
+} from './aboutContent'
+import { productLink, SHOP_LIST_LINK } from '../Shop/shopHelpers'
 
-import './AboutUs.css'
-import {useNavigate } from 'react-router-dom'
-import { UserContext } from '../../../authentication/pages/UserContext';
+const IMAGES = process.env.REACT_APP_PUBLIC_IMAGES_URL
 
-const Aboutus = ({ selectCategory }) => {
-    const navigate = useNavigate()
-    const { isLoggedIn, login, logout } = useContext(UserContext);
-
-
-
-    useEffect(() => {
-        $(function () {
-            $(window).scrollTop(0);
-        });
-    }, [])
-
-    return (
-        <div>
-
-          
-
-
-            <div className='w-100 d-flex flex-column-reverse flex-lg-row justify-content-between mb-3 mb-lg-0'>
-                <div className='w-50-resp-tab'>
-                    <div className='brick-clr mb-4 f-xl'><b>SIBU FISH N’ MEAT</b></div>
-                    <div className='clr-868790 f-sm lh-33 fw-500 text-justify text-lg-start'>
-                        Welcome to Sibu Fish N' Meat delivery service! We are a team of dedicated professionals who believe in providing our customers with the freshest and highest quality seafood and meat products. With a passion for exceptional taste and unparalleled customer service, we have built a reputation for being the go-to destination for discerning food lovers.
-                        <br />
-                        <br />
-
-                        We source our products from trusted local suppliers and ensure that all of our meats and fish are hand-selected for their freshness and flavour. We offer a hassle-free ordering process, flexible delivery options, and the ability to customise your order to suit your preferences.
-                        <br />
-                        <br />
-
-
-
-                    </div>
-                </div>
-                <div className='w-50-resp-mob text-end'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/Aboutus/aboutusimg.svg`} alt='' className='aboutusimgsize'></img>
-                </div>
-            </div>
-
-            <div className='w-100 d-flex flex-column flex-lg-row missionvission'>
-                <div className='w-50-mob-resp box-shadow bg-white py-3 p-5 radius-11 me-0 me-lg-3 d-flex flex-column flex-lg-row align-items-center mb-3 mb-lg-0'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/Aboutus/mission.svg`} alt='' className='mb-2 mb-lg-0'></img>
-                    <div className='ms-0 ms-lg-5'>
-                        <div className='fw-600 text-center text-lg-start'>Mission</div>
-                        <div className='f-xs mt-2 text-center text-lg-start'>
-                            Our mission is to provide our customers with the freshest and highest-quality fish and meat, ensuring convenience, reliability, and exceptional customer service.
-                        </div>
-                    </div>
-                </div>
-                <div className='w-50-mob-resp box-shadow  bg-white py-3 p-5 radius-11 me-2 d-flex flex-column flex-lg-row align-items-center'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/Aboutus/vission.svg`} alt='' className='mb-2 mb-lg-0'></img>
-                    <div className='ms-0 ms-lg-5'>
-                        <div className='fw-600 text-center text-lg-start'>Vision</div>
-                        <div className='f-xs mt-2 text-center text-lg-start'>
-                            We aim to expand our reach, ensuring that everyone can have access to premium seafood and meats, regardless of their location.
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div className='ousrservices w-100 mt-5 my-lg-5'>
-                <div className='mb-100 text-center f-xl fw-600 black-clr'>Our Services </div>
-                <div className='d-flex flex-column flex-md-row justify-content-between'>
-                    <div className='item'>
-                        <div className='absolute img-bg'><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/Aboutus/fish.svg`} alt=''></img></div>
-                        <div className='fw-600 black-clr mb-2'>Fish</div>
-                        <p className='f-xs clr-868790 mb-4'>
-                            Get the freshest catch and succulent cuts straight to your kitchen, ensuring convenience without compromising quality.
-                        </p>
-                        <button className='lightbrick-btn f-xs px-4 underline-none py-1' onClick={() => { selectCategory(8); navigate('/shop') }} >View</button>
-                    </div>
-                    <div className='mx-0 mx-lg-4 item'>
-                        <div className='absolute img-bg'><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/Aboutus/meat.svg`} alt=''></img></div>
-                        <div className='fw-600 black-clr mb-2'>Meat</div>
-                        <p className='f-xs clr-868790 mb-4'>
-                            We provide high-quality meat cuts that are responsibly sourced and delivered with great care.
-
-
-                        </p>
-                        <button className='lightbrick-btn f-xs px-4 underline-none py-1' onClick={() => { selectCategory(2); navigate('/shop') }} >View</button>
-
-                    </div>
-                    <div className='item'>
-                        <div className='absolute img-bg'><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/Aboutus/crab.svg`} alt=''></img></div>
-                        <div className='fw-600 black-clr mb-2'>Seashell</div>
-                        <p className='f-xs clr-868790 mb-4'>
-                            Elevate your seafood presentations with stunning seashells, adding a touch of elegance to your dining experience.
-                        </p>
-                        <button className='lightbrick-btn f-xs px-4 underline-none py-1' onClick={() => { selectCategory(3); navigate('/shop') }} >View</button>
-
-                    </div>
-                </div>
-            </div>
-            {/* 
-        <video>
-    <source src={hbhd} type="video/mp4" />
-    Sorry, your browser doesn't support videos.
-</video> */}
-
-            <div className='keepintouch bg-F7EBEC my-4 radius-11 py-3 px-5 d-flex flex-column-reverse flex-lg-row align-items-center justify-content-center'>
-                <div className=''>
-                    <div className='fw-600 f-xl'>Get In Touch with Us!  </div>
-                    <div className='f-xs clr-868790 mt-2 mb-3'>Discover the finest selection.</div>
-
-                    {isLoggedIn ?
-                        <button className='lightbrick-btn  f-sm' onClick={() => navigate('/')}>Go to Home</button>
-                        :
-                        <div>
-                            <button className='lightbrick-btn w-90px f-sm me-2' onClick={() => navigate('/sign-up')}>Sign Up</button>
-                            <button className='white-btn w-90px f-sm' onClick={() => { localStorage.setItem("userRoleRequest", "user"); navigate('/login') }}>Login</button>
-                        </div>
-                    }
-                </div>
-                <div>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/Aboutus/keepintouch.svg`} alt='' className='keepintouchimg'></img>
-                </div>
-            </div>
-        </div>
-    )
-
+// Fades elements with the "reveal" class in as they scroll into view
+const useRevealOnScroll = () => {
+  useEffect(() => {
+    const elements = document.querySelectorAll('.about-page .reveal')
+    if (!('IntersectionObserver' in window)) {
+      elements.forEach((el) => el.classList.add('is-visible'))
+      return
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' })
+    elements.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
 }
 
-export default Aboutus
+// /about-us
+const AboutUs = () => {
+  useRevealOnScroll()
+
+  return (
+    <div className='about-page'>
+
+      {/* ---------- Hero ---------- */}
+      <section className='about-hero'>
+        <div className='about-hero-inner'>
+          <div className='about-hero-text'>
+            <span className='eyebrow'>{ABOUT_HERO.eyebrow}</span>
+            <h1>{ABOUT_HERO.title}</h1>
+            <p>{ABOUT_HERO.text}</p>
+            <div className='about-hero-actions'>
+              <Link to={SHOP_LIST_LINK} className='btn-primary'>
+                Shop our products <Icon name='arrow' size={18} strokeWidth={2.2} />
+              </Link>
+              <a href='#team' className='btn-outline'>Meet the team</a>
+            </div>
+          </div>
+          <div className='about-hero-art' aria-hidden='true'>
+            <div className='art-photo big'><img src={`${IMAGES}/home/hero-mob.jpg`} alt='' /></div>
+            <div className='art-photo small'><img src={`${IMAGES}/home/sec-2-1.jpg`} alt='' /></div>
+            <div className='art-badge'>
+              <strong>Health</strong>
+              <span>for those who matter</span>
+            </div>
+          </div>
+        </div>
+
+        <div className='about-facts'>
+          {QUICK_FACTS.map((fact) => (
+            <div className='about-fact reveal' key={fact.title}>
+              <span className='about-fact-icon'><Icon name={fact.icon} size={24} /></span>
+              <div>
+                <strong>{fact.title}</strong>
+                <span>{fact.text}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------- Our story ---------- */}
+      <section className='about-story'>
+        <div className='about-story-inner'>
+          <div className='about-story-head reveal'>
+            <span className='eyebrow'>Our story</span>
+            <h2>Food for people who care what is inside</h2>
+            <blockquote>
+              “The food that is easiest to cook should also be the food that is best for you.”
+            </blockquote>
+          </div>
+          <div className='about-story-text reveal'>
+            {STORY.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Values ---------- */}
+      <section className='about-values'>
+        <div className='section-head reveal'>
+          <span className='eyebrow'>What we stand for</span>
+          <h2>Healthy, honest and easy</h2>
+        </div>
+        <div className='value-grid'>
+          {VALUES.map((value, index) => (
+            <div className='value-card reveal' key={value.title} style={{ transitionDelay: `${index * 80}ms` }}>
+              <span className='value-number'>{String(index + 1).padStart(2, '0')}</span>
+              <span className='value-icon'><Icon name={value.icon} size={26} /></span>
+              <h3>{value.title}</h3>
+              <p>{value.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ---------- Flagship product ---------- */}
+      <section className='about-flagship'>
+        <div className='about-flagship-inner reveal'>
+          <div className='flagship-image'>
+            <img src={FLAGSHIP.image} alt={FLAGSHIP.title} loading='lazy' />
+          </div>
+          <div className='flagship-text'>
+            <span className='eyebrow light'>{FLAGSHIP.eyebrow}</span>
+            <h2>{FLAGSHIP.title}</h2>
+            <p>{FLAGSHIP.text}</p>
+            <ul>
+              {FLAGSHIP.points.map((point) => (
+                <li key={point}><Icon name='check' size={16} strokeWidth={2.4} />{point}</li>
+              ))}
+            </ul>
+            <p className='flagship-next'>{FLAGSHIP.next}</p>
+            <Link to={productLink(FLAGSHIP.productId)} className='btn-light'>
+              View the soup premix <Icon name='arrow' size={18} strokeWidth={2.2} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Why mushrooms ---------- */}
+      <section className='about-mushrooms'>
+        <div className='about-mushrooms-inner'>
+          <div className='mushroom-photos reveal' aria-hidden='true'>
+            {MUSHROOM_STORY.images.map((image, index) => (
+              <div className={`mushroom-photo p${index}`} key={image}><img src={image} alt='' loading='lazy' /></div>
+            ))}
+          </div>
+          <div className='mushroom-text reveal'>
+            <span className='eyebrow'>{MUSHROOM_STORY.eyebrow}</span>
+            <h2>{MUSHROOM_STORY.title}</h2>
+            {MUSHROOM_STORY.text.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+            <div className='mushroom-facts'>
+              {MUSHROOM_STORY.facts.map((fact) => (
+                <div key={fact.label}>
+                  <strong>{fact.value}<small>{fact.unit}</small></strong>
+                  <span>{fact.label}</span>
+                </div>
+              ))}
+            </div>
+            <Link to='/why-mushrooms' className='text-link'>
+              Read about the health benefits <Icon name='arrow' size={18} strokeWidth={2.2} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- How we work ---------- */}
+      <section className='about-process'>
+        <div className='section-head center reveal'>
+          <span className='eyebrow'>How we work</span>
+          <h2>From our farm to your kitchen</h2>
+        </div>
+        <ol className='about-process-steps reveal'>
+          {PROCESS.map((step, index) => (
+            <li key={step.title} style={{ '--step': index }}>
+              <span className='process-dot'><Icon name={step.icon} size={24} /></span>
+              <strong>{step.title}</strong>
+              <span>{step.text}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      {/* ---------- Where we deliver ---------- */}
+      <section className='about-delivery'>
+        <div className='about-delivery-inner'>
+          <div className='delivery-map reveal' aria-hidden='true'>
+            <span className='ring r3' />
+            <span className='ring r2' />
+            <span className='ring r1' />
+            <span className='delivery-pin'><Icon name='sprout' size={26} /></span>
+            <span className='delivery-label'>30 km</span>
+          </div>
+          <div className='delivery-text reveal'>
+            <span className='eyebrow'>Where we deliver</span>
+            <h2>Fresh nearby, packed products everywhere</h2>
+            <div className='delivery-cards'>
+              <div className='delivery-card'>
+                <span className='delivery-icon'><Icon name='truck' size={24} /></span>
+                <div>
+                  <strong>Fresh mushrooms within 30 km</strong>
+                  <p>Perishable items are delivered fresh within about 30 km of our farm near Perambra, Kozhikode.</p>
+                </div>
+              </div>
+              <div className='delivery-card'>
+                <span className='delivery-icon'><Icon name='box' size={24} /></span>
+                <div>
+                  <strong>Everything else, all over India</strong>
+                  <p>Dried mushrooms, powders and ready-to-cook products are shipped anywhere in India.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Team ---------- */}
+      <section className='about-team' id='team'>
+        <div className='section-head center reveal'>
+          <span className='eyebrow light'>Meet the team</span>
+          <h2>The people behind Oval Farms</h2>
+        </div>
+        <div className='team-grid'>
+          {TEAM.map((member, index) => (
+            <article className='team-card reveal' key={member.name} style={{ transitionDelay: `${index * 100}ms` }}>
+              <div className='team-photo'>
+                <img src={member.photo} alt={member.name} loading='lazy' />
+              </div>
+              <h3>{member.name}</h3>
+              <span className='team-role'>{member.role}</span>
+              <ul>
+                {member.details.map((detail) => <li key={detail}>{detail}</li>)}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </section>
+    </div>
+  )
+}
+
+export default AboutUs

@@ -21,6 +21,7 @@ import WhyMushrooms from '../pages/WhyMushrooms/WhyMushrooms';
 import ShopList from '../pages/Shop/ShopList';
 import ProductDetails from '../pages/Shop/ProductDetails';
 import ComingSoon from '../pages/Shop/ComingSoon';
+import AboutUs from '../pages/AboutUs/AboutUs';
 
 // Scrolls to the top on every new page, or to a section when the link has a #hash
 const ScrollManager = () => {
@@ -61,6 +62,7 @@ const Layout = () => {
           <Route path="home" element={<Home />} />
           <Route path="contact-us" element={<ContactUs />} />
           <Route path="why-mushrooms" element={<WhyMushrooms />} />
+          <Route path="about-us" element={<AboutUs />} />
           <Route path="shop" element={<Navigate to="/shop/list" replace />} />
           <Route path="shop/list" element={<ShopList />} />
           <Route path="shop/details/:id" element={<ProductDetails />} />
