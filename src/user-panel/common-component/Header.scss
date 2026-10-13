@@ -1,118 +1,247 @@
-.header {
+@import '../../styles/theme';
+
+.announcement-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 36px;
+  padding: 6px 16px;
+  background: $green-900;
+  color: rgba($white, 0.92);
+  font-family: $font-body;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+
+  .dot {
+    color: $green;
+  }
+
+  @include mob {
+    font-size: 12px;
+
+    span:first-child,
+    .dot {
+      display: none;
+    }
+  }
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba($white, 0.92);
+  backdrop-filter: saturate(160%) blur(12px);
+  -webkit-backdrop-filter: saturate(160%) blur(12px);
+  border-bottom: 1px solid rgba($green-900, 0.06);
+  transition: box-shadow 0.25s ease, background-color 0.25s ease;
+
+  &.scrolled {
+    background: rgba($white, 0.97);
+    box-shadow: 0 6px 24px rgba($green-900, 0.08);
+  }
+
+  .header-inner {
+    @include container;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 30px 80px;
-    position: fixed;
-    z-index: 100;
+    justify-content: space-between;
+    gap: 24px;
+    height: $header-height;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    img {
+      height: 52px;
+      width: auto;
+      display: block;
+    }
+  }
+
+  .main-nav {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    a {
+      position: relative;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-family: $font-body;
+      font-size: 15px;
+      font-weight: 500;
+      color: $ink;
+      text-decoration: none;
+      transition: color 0.2s ease, background-color 0.2s ease;
+
+      &:hover {
+        color: $green-700;
+        background: $green-50;
+      }
+
+      &.active {
+        color: $green-700;
+
+        &::after {
+          content: '';
+          position: absolute;
+          left: 50%;
+          bottom: 3px;
+          width: 6px;
+          height: 6px;
+          margin-left: -3px;
+          border-radius: 50%;
+          background: $green;
+        }
+      }
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .menu-btn {
+    display: none;
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 12px;
+    background: $green-50;
+    cursor: pointer;
+
+    span {
+      position: absolute;
+      left: 12px;
+      width: 20px;
+      height: 2px;
+      border-radius: 2px;
+      background: $green-900;
+      transition: transform 0.3s ease, opacity 0.2s ease, top 0.3s ease;
+
+      &:nth-child(1) { top: 15px; }
+      &:nth-child(2) { top: 21px; }
+      &:nth-child(3) { top: 27px; }
+    }
+
+    &.open span {
+      &:nth-child(1) { top: 21px; transform: rotate(45deg); }
+      &:nth-child(2) { opacity: 0; }
+      &:nth-child(3) { top: 21px; transform: rotate(-45deg); }
+    }
+  }
+
+  @include tab {
+    .main-nav {
+      display: none;
+    }
+
+    .menu-btn {
+      display: block;
+    }
+  }
+
+  @include mob {
+    .header-inner {
+      height: 64px;
+    }
+
+    .brand img {
+      height: 38px;
+    }
+
+    .header-actions .order-btn {
+      display: none;
+    }
+  }
+}
+
+.order-btn {
+  @include btn-primary;
+  height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+
+  &.mobile {
+    display: flex;
+    width: 100%;
+    height: 52px;
+    margin-top: 20px;
+    font-size: 15px;
+  }
+}
+
+.mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: rgba($green-900, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mobile-menu-panel {
+    position: absolute;
     top: 0;
-    left: 0;
-    width: 100vw;
-    background-color: rgba(85, 85, 85, 0);
-    transition: all 0.3s ease-in-out; // Add smooth transition
+    right: 0;
+    width: min(360px, 88vw);
+    height: 100%;
+    padding: 116px 24px 32px;
+    background: $cream;
+    box-shadow: $shadow-lg;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 
-    .app-logo {
-        height: 72px;
-        transition: all 0.3s ease-in-out; // Add smooth transition
+    > a:not(.order-btn) {
+      padding: 16px 4px;
+      border-bottom: 1px solid $sand;
+      font-family: $font-display;
+      font-size: 24px;
+      font-weight: 500;
+      color: $green-900;
+      text-decoration: none;
+      opacity: 0;
+      transform: translateX(16px);
+      transition: opacity 0.3s ease, transform 0.3s ease, color 0.2s ease;
+
+      &.active,
+      &:hover {
+        color: $green;
+      }
     }
+  }
 
-    .text-menu-box {
-        display: flex;
-        justify-content: space-between;
-        width: fit-content;
-        margin: 0 0px 0 auto;
+  &.open .mobile-menu-panel {
+    transform: translateX(0);
+
+    > a {
+      opacity: 1;
+      transform: translateX(0);
     }
+  }
 
-    .text-menu-box span {
-        font-family: "Work Sans", sans-serif;
-        font-size: 16px;
-        font-weight: 400;
-        line-height: 1;
-        margin-right: 40px;
-        color: #FFFFFF;
-        cursor: pointer;
-        padding: 15px 0;
-        transition: all ease 0.9s;
-        border-bottom: 3px solid #fff;
-        border-color: #fff0;
-
-    }
-
-    .text-menu-box span:hover,
-    .text-menu-box span.active {
-        border-color: #ffff;
-    }
-
-    .login-btn {
-        margin: 0 40px 0 0;
-        cursor: pointer;
-
-    }
-
-    .hamburger-btn {
-        cursor: pointer;
-    }
-}
-
-.header.shrinked {
-    background-color: rgb(0, 0, 0);
-    padding: 30px 80px;
-
-    .app-logo {
-        height: 55px;
-    }
-}
-
-
-
-@media(max-width:1005px) {
-    .header {
-
-        padding: 30px 80px;
-
-
-
-    }
-
-    .header {
-        .app-logo {
-            height: 62px;
-        }
-
-        .text-menu-box {
-            display: none;
-
-        }
-
-        .login-btn {
-            margin: 0 40px 0 auto;
-
-
-        }
-
-        .hamburger-btn {}
-    }
-}
-
-
-@media(max-width:576px) {
-    .header {
-        padding: 30px 30px;
-    }
-
-    .header.shrinked {
-        padding: 10px 20px;
-    }
-
-    .header {
-        .app-logo {
-            height: 52px;
-        }
-
-        .login-btn {
-            margin: 0 15px 0 auto;
-        }
-
-        .hamburger-btn {}
-    }
+  .mobile-menu-note {
+    margin-top: auto;
+    font-family: $font-body;
+    font-size: 13px;
+    line-height: 1.5;
+    color: $muted;
+    text-align: center;
+  }
 }

@@ -1,1801 +1,209 @@
-import React, { useEffect, useState, useRef } from 'react'
-import DocumentMeta from 'react-document-meta';
-import { metaTags } from '../../../Constants.js'
+import React, { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import './Home.scss'
+import Icon from './Icon'
+import { HIGHLIGHTS, PRODUCTS, DISHES, BENEFITS } from './homeContent'
+import { SITE_INFO } from '../../../siteInfo'
+import { ORDER_LINK } from '../../common-component/navLinks'
 
-import { useNavigate } from 'react-router-dom';
+const IMAGES = process.env.REACT_APP_PUBLIC_IMAGES_URL
 
-import ErrorModal from "../../../ErrorModal.js";
-import PositiveModal from "../../../PositiveModal.js";
-import FixedOverlayLoadingSpinner from "../../../FixedOverlayLoadingSpinner.js"
-import $ from 'jquery';
-import API from "../../../API.js"
-
-import Slider from 'react-slick';
-
-
-
-const Userhome = ({ userData, loadUserData }) => {
-
-
-
-
-  const navigate = useNavigate();
-
-
-  const [tabSelected, selectTab] = useState(0);
-
-  const [message, setMessage] = useState(null);
-  const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
-
-  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [bannerSoundOn, setBannerSoundOn] = useState(false)
-  const [videoSrc, setVideoSrc] = useState('');
-
-  const sec4Data = [
-    { title: "Digital Engineering", description: "Efficient solutions, proactive support, and seamless IT management for optimised business performance and security." },
-    { title: "Quality Assurance", description: "Exceptional QA solutions ensure seamless performance, reliability, and precision for your products and applications." },
-    { title: "Future-Tech Solutions", description: "Enhance business productivity through advanced AI and Automation, optimising processes for improved efficiency and innovation." }
-  ]
-  const sec5Data = [
-    {
-      title: "Healthcare",
-      description: "Empower your healthcare organisation with comprehensive IT services, fostering seamless operations, advanced data management, and robust security solutions. Enhance efficiency and connectivity within the healthcare industry, ensuring optimal performance and compliance in a rapidly evolving digital landscape.",
-      link: "/healthcare"
-    },
-    {
-      title: "Technology",
-      description: "Strengthen your tech venture with our top IT services. Our solutions seamlessly integrate with your business, enhancing operational efficiency and fostering growth. From automation to cybersecurity, trust us for reliable support that aligns seamlessly with your technological aspirations.",
-      link: "/technology"
-    },
-    {
-      title: "Telecom",
-      description: "Efficiently navigate the dynamic landscape of the Telecom industry with our specialised IT services. Streamline operations, enhance connectivity, and stay ahead in the competitive market. Our solutions are crafted to optimise performance and ensure seamless technological integration.",
-      link: "/telecom"
-    },
-    {
-      title: "Education",
-      description: "Enhance educational environments with proficient IT services designed to integrate technology seamlessly. Our solutions optimise connectivity, streamline operations, and foster a dynamic learning experience. Elevate your institution's digital landscape with our specialised support for the education industry.",
-      link: "/education"
-    },
-    {
-      title: "Travel",
-      description: "Unlock the potential of your travel business with our IT services. Seamlessly integrate technology to enhance customer experiences, streamline operations, and stay ahead in the dynamic travel industry. Explore innovative solutions that redefine your journey towards success.",
-      link: "/travel"
-    },
-    {
-      title: "Banking Services",
-      description: "Explore our dynamic suite of IT solutions designed exclusively for the banking industry. Seamlessly integrate innovative technologies to enhance operational efficiency, strengthen security protocols, and foster a resilient digital ecosystem. Elevate your banking experience with our specialised IT services.",
-      link: "/banking"
-    },
-    {
-      title: "Insurance",
-      description: "Navigating the complex landscape of the insurance industry demands adept IT solutions. Our services address industry challenges head-on, offering nuanced support. From data security to streamlined processes, we ensure your insurance operations flourish in an ever-evolving digital landscape.",
-      link: "/insurance"
-    },
-    {
-      title: "Legal",
-      description: "Enhance your legal operations with our IT solutions, addressing industry challenges seamlessly. Streamline workflow, mitigate data security concerns, and enhance collaboration. Our services optimise your technology landscape, fostering efficiency and resilience in the dynamic legal environment.",
-      link: "/legal"
-    },
-    {
-      title: "Media",
-      description: "Streamline your media business with our IT services, addressing industry challenges. We enhance efficiency, minimise downtime, and ensure seamless workflows. Our personalised solutions align with your unique needs, fostering innovation and growth in a dynamic media landscape.",
-      link: "/media"
-    },
-    {
-      title: "Pharma",
-      description: "Enhance pharmaceutical operations with our proficient IT services, seamlessly integrating technology to optimise processes. Streamline data management, ensure regulatory compliance, and fortify security protocols. Drive efficiency and innovation within the pharmaceutical realm, fostering a resilient and agile industry landscape.",
-      link: "/pharma"
-    },
-
-  ]
-
+// Fades sections in as they scroll into view (elements with the "reveal" class)
+const useRevealOnScroll = () => {
   useEffect(() => {
-    $(function () {
-      $(window).scrollTop(0);
-    });
+    const elements = document.querySelectorAll('.home-page .reveal')
+    if (!('IntersectionObserver' in window)) {
+      elements.forEach((el) => el.classList.add('is-visible'))
+      return
+    }
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' })
+    elements.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
+}
+
+// A horizontally scrolling row with previous / next buttons
+const ScrollRow = ({ className, children, label }) => {
+  const rowRef = useRef(null)
+  const scrollBy = (direction) => {
+    const row = rowRef.current
+    if (!row) return
+    const card = row.firstElementChild
+    const step = card ? card.getBoundingClientRect().width + 20 : row.clientWidth * 0.8
+    row.scrollBy({ left: direction * step, behavior: 'smooth' })
+  }
+  return (
+    <div className={`scroll-row-wrap ${className || ''}`}>
+      <div className='scroll-row' ref={rowRef} role='list' aria-label={label}>
+        {children}
+      </div>
+      <div className='scroll-row-buttons'>
+        <button onClick={() => scrollBy(-1)} aria-label='Previous'><Icon name='arrowLeft' size={20} /></button>
+        <button onClick={() => scrollBy(1)} aria-label='Next'><Icon name='arrow' size={20} /></button>
+      </div>
+    </div>
+  )
+}
+
+const Home = () => {
+  useRevealOnScroll()
+
+  // The "4" in FOOD 4 HEALTH spins when you scroll back up
+  const [spinFour, setSpinFour] = useState(false)
+  useEffect(() => {
+    let lastY = window.scrollY
+    const handleScroll = () => {
+      const y = window.scrollY
+      setSpinFour(y < lastY)
+      lastY = y
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const [opacity, setOpacity] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const documentHeight = document.body.scrollHeight - window.innerHeight;
-      const calculatedOpacity = (scrollTop / ((window.innerHeight)));
-      setOpacity(Math.min(calculatedOpacity, 1));
-    };
-
-    window.addEventListener('scroll', throttle(handleScroll, 10));
-    return () => {
-      window.removeEventListener('scroll', throttle(handleScroll, 10));
-    };
-  }, []);
-
-
-
-
-  const throttle = (func, limit) => {
-    let inThrottle;
-    return function () {
-      const args = arguments;
-      const context = this;
-      if (!inThrottle) {
-        func.apply(context, args);
-        inThrottle = true;
-        setTimeout(() => inThrottle = false, limit);
-      }
-    }
-  };
-
-  useEffect(() => {
-    const updateVideoSource = () => {
-      const width = window.innerWidth;
-      if (width > 1004) {
-        setVideoSrc('/images/home/banner-web.mp4');
-      } else if (width < 1005 && width > 767) {
-        setVideoSrc('/images/home/banner-tab.mp4');
-      } else if (width < 768) {
-        setVideoSrc('/images/home/banner-mob.mp4');
-      }
-    };
-
-    // Initial video source setting
-    updateVideoSource();
-
-    // Update video source on resize
-    window.addEventListener('resize', updateVideoSource);
-
-    return () => {
-      window.removeEventListener('resize', updateVideoSource);
-    };
-  }, []);
-
-
-
-
-  //sec 2 & 3 animation
-  useEffect(() => {
-    const handleScroll = () => {
-      var sec2TextElement = null;
-      var sec2ImageElement = null;
-
-      const sec3Text1Element = document.getElementById('sec-3-text-1');
-      const sec3Text2Element = document.getElementById('sec-3-text-2');
-      const sec3ImageElement = document.getElementById('sec-3-image');
-
-      if (window.innerWidth > 1004) {
-        sec2TextElement = document.getElementById('scrolling-text-web');
-        sec2ImageElement = document.getElementById('sec-2-animation-web-tab');
-
-      }
-      else if (window.innerWidth > 767) {
-        sec2TextElement = document.getElementById('scrolling-text-tab');
-        sec2ImageElement = document.getElementById('sec-2-animation-web-tab');
-
-
-      }
-
-
-      if (sec2TextElement) {
-        const text = sec2TextElement.textContent;
-        const scrollPosition = window.scrollY;
-        const windowHeight = window.innerHeight;
-        console.log("scrollPosition", scrollPosition)
-        let coloredText = '';
-
-        // Adjust these values to control speed and offset
-        const scrollSensitivity = .3; // Change this value to control speed
-
-        var offset = 0;
-
-        if (window.innerWidth > 1004) {
-          offset = -800;
-        }
-
-        else if (window.innerWidth > 767) {
-          offset = -1100;
-        }
-
-
-
-        for (let i = 0; i < text.length; i++) {
-          const color = ((scrollPosition + offset) / (windowHeight * scrollSensitivity)) > (i / text.length) ? '#fff' : '#777';
-
-          coloredText += `<span style="color: ${color}">${text[i]}</span>`;
-
-          if (window.innerWidth > 767) {
-            if (i == 25 || i == 56 || i == 86 || i == 117) {
-              coloredText += '<br/>'
-            }
-          }
-
-
-        }
-
-        var breakPoint1 = 0;
-        var breakPoint2 = 0;
-        var breakPoint3 = 0;
-        var breakPoint4 = 0;
-        var breakPoint5 = 0;
-        var breakPoint6 = 0;
-
-        if (window.innerWidth > 1004) {
-          var breakPoint1 = 700;
-          var breakPoint2 = 1000;
-          var breakPoint3 = 1200;
-          var breakPoint4 = 1500;
-          var breakPoint5 = 1700;
-          var breakPoint6 = 1900;
-        }
-        else if (window.innerWidth > 767) {
-          var breakPoint1 = windowHeight;
-          var breakPoint2 = windowHeight * 2;
-          var breakPoint3 = (windowHeight * 2) + 200;
-          var breakPoint4 = (windowHeight * 2) + 500;
-          var breakPoint5 = (windowHeight * 2) + 700;
-          var breakPoint6 = (windowHeight * 2) + 900;
-        }
-
-
-        if (window.innerWidth > 768) {
-          if (scrollPosition < 700) {
-            sec2TextElement.classList.remove("in-view");
-            sec2TextElement.classList.remove("passed");
-
-            sec2ImageElement.classList.remove("in-view");
-            sec2ImageElement.classList.remove("passed");
-
-
-
-
-          }
-
-          else if (scrollPosition > breakPoint1 && scrollPosition < breakPoint2) {
-
-            sec2TextElement.classList.add("in-view");
-            sec2TextElement.classList.remove("passed")
-
-            sec2ImageElement.classList.add("in-view");
-            sec2ImageElement.classList.remove("passed")
-
-            sec3Text1Element.classList.remove("in-view")
-            sec3Text1Element.classList.remove("passed")
-
-            sec3ImageElement.classList.remove("in-view")
-            sec3ImageElement.classList.remove("passed")
-
-            sec3Text2Element.classList.remove("in-view")
-            sec3Text2Element.classList.remove("passed")
-
-
-          }
-          else if (scrollPosition > breakPoint2 && scrollPosition < breakPoint3) {
-            sec2TextElement.classList.remove("in-view")
-            sec2TextElement.classList.add("passed");
-
-
-            sec2ImageElement.classList.remove("in-view");
-            sec2ImageElement.classList.add("passed")
-
-            sec3Text1Element.classList.remove("in-view");
-            sec3Text1Element.classList.remove("passed");
-
-            sec3ImageElement.classList.remove("in-view");
-            sec3ImageElement.classList.remove("passed")
-
-            sec3Text2Element.classList.remove("in-view");
-            sec3Text2Element.classList.remove("passed");
-
-
-          }
-          else if (scrollPosition > breakPoint3 && scrollPosition < breakPoint4) {
-            sec3Text1Element.classList.add("in-view");
-            sec3Text1Element.classList.remove("passed")
-
-
-
-          }
-
-          else if (scrollPosition > breakPoint4 && scrollPosition < breakPoint5) {
-            sec3ImageElement.classList.add("in-view");
-            sec3ImageElement.classList.remove("passed")
-          }
-
-          else if (scrollPosition > breakPoint5 && scrollPosition < breakPoint6) {
-            sec3Text2Element.classList.add("in-view");
-            sec3Text2Element.classList.remove("passed")
-          }
-
-          else if (scrollPosition > breakPoint6) {
-            sec3Text1Element.classList.remove("in-view");
-            sec3Text1Element.classList.add("passed");
-
-            sec3ImageElement.classList.remove("in-view");
-            sec3ImageElement.classList.add("passed")
-
-            sec3Text2Element.classList.remove("in-view");
-            sec3Text2Element.classList.add("passed");
-          }
-        }
-
-
-
-
-
-        sec2TextElement.innerHTML = coloredText;
-      }
-    };
-
-    const throttledHandleScroll = throttle(handleScroll, 10);
-
-    window.addEventListener('scroll', throttledHandleScroll);
-    return () => {
-      window.removeEventListener('scroll', throttledHandleScroll);
-    };
-  }, []);
-
-  const settings = {
-    dots: true,
-    infinite: true,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    autoplay: true,
-    speed: 2000,
-    autoplaySpeed: 3000,
-    cssEase: "linear",
-    pauseOnHover: false,
-    responsive: [
-      {
-        breakpoint: 1033,
-        settings: {
-          slidesToShow: 2,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: false,
-
-        },
-      },
-      {
-        breakpoint: 550,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          autoplay: true,
-          speed: 500,
-          autoplaySpeed: 4000,
-          pauseOnHover: true,
-          infinite: true,
-          dots: true,
-          centerMode: true,
-          centerPadding: '0px',
-        },
-      },
-    ]
-
-  };
-
-
-  const settings2 = {
-    dots: false,
-    infinite: true,
-    slidesToShow: 3,
-
-    autoplay: true,
-    speed: 500,
-    autoplaySpeed: 3000,
-    cssEase: "linear",
-    pauseOnHover: false,
-    className: "center",
-    centerMode: true,
-    centerPadding: "60px",
-    responsive: [
-      {
-        breakpoint: 1033,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: false,
-          centerMode: true,
-          centerPadding: '0px',
-        },
-      },
-      {
-        breakpoint: 550,
-        settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          autoplay: true,
-          autoplaySpeed: 2000,
-          pauseOnHover: true,
-          infinite: true,
-          dots: false,
-          centerMode: true,
-          centerPadding: '0px',
-        },
-      },
-    ]
-
-  };
-
-  const settings3 = {
-    dots: false,
-    infinite: true,
-    slidesToShow: 12,
-    slidesToScroll: 1,
-    autoplay: true,
-    speed: 2000,
-    autoplaySpeed: 2000,
-    cssEase: "linear",
-    rtl: true,
-    pauseOnHover: false,
-    responsive: [
-      {
-        breakpoint: 1033,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: false,
-
-        },
-      },
-    ]
-  };
-  const settings4 = {
-    dots: false,
-    infinite: true,
-    slidesToShow: 12,
-    slidesToScroll: 1,
-    autoplay: true,
-    speed: 2000,
-    autoplaySpeed: 2000,
-    cssEase: "linear",
-    rtl: false,
-    pauseOnHover: false,
-    responsive: [
-      {
-        breakpoint: 1033,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 1,
-          infinite: true,
-          dots: false,
-
-        },
-      },
-    ]
-  };
-  const [activeSection, setActiveSection] = useState(null);
-
-  const handleSectionClick = (index) => {
-    setActiveSection(activeSection === index ? null : index);
-  };
-
-  const [content1, setContent1] = useState(false);
-
-  const cont1btn = () => {
-    setContent1(!content1);
-  }
-
-  const sec6Data = [
-    { title: 'Boosts Immunity', content: 'Mushrooms contain beta-glucans, which stimulate the immune system and help the body fight infections and illnesses.', path: `${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-1.jpg` },
-    { title: 'Rich in Antioxidants', content: 'Mushrooms are packed with antioxidants like ergothioneine and selenium, which protect cells from damage and reduce oxidative stress.', path: `${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-2.avif` },
-    { title: 'Supports Brain Health', content: 'They contain nutrients like B vitamins and ergothioneine, which improve cognitive function and may reduce the risk of neurodegenerative diseases.', path: `${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-3.jpg` },
-    { title: 'Promotes Heart Health', content: 'Mushrooms are cholesterol-free and contain compounds that lower bad cholesterol (LDL) while improving heart health.', path: `${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-4.jpg` },
-    { title: 'Improves Gut Health', content: 'High in fiber and prebiotics, mushrooms support healthy gut bacteria and improve digestion.', path: `${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-5.jpg` },
-    { title: 'Helps Manage Weight', content: 'Low in calories but rich in nutrients, mushrooms are a great addition to weight-loss diets and keep you feeling full longer.', path: `${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-6.webp` },
-    { title: 'Balances Blood Sugar', content: 'The fiber in mushrooms helps stabilize blood sugar levels, reducing the risk of diabetes.', path: `${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-7.jpg` },
-    { title: 'Provides Vitamin D', content: 'Mushrooms are one of the few natural plant sources of vitamin D, essential for bone health and immunity.', path: `${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-8.jpg` },
-    { title: 'Fights Inflammation', content: 'Anti-inflammatory properties in mushrooms reduce chronic inflammation, improving overall health and preventing diseases.', path: `${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-9.webp` },
-    { title: 'Enhances Energy Levels', content: 'Rich in B vitamins, mushrooms help convert food into energy, combating fatigue and supporting metabolic functions.', path: `${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-10.jpg` },
-      ];
-
-
-
-  const [formData, setFormData] = useState({
-    "first_name": "",
-    "last_name": "",
-    "email": "",
-    "country_code": "",
-    "phone_number": "",
-    "company_name": "",
-    "industry": "",
-    "category": "",
-    "message": ""
-  });
-
-
-
-  const [agree1, setAgree1] = useState(false);
-  const [agree2, setAgree2] = useState(false);
-  const [optionListOpened, toggleOptionList] = useState(false)
-  const [errors, setErrors] = useState({});
-  const handleChange = (e) => {
-
-
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-
-
-  };
-  const handlePhoneChange = (value, country) => {
-    setFormData({
-      ...formData,
-      phone_number: value,
-      country_code: country.dialCode
-    });
-  };
-  const selectCategory = (value) => {
-
-    setFormData({
-      ...formData,
-      "category": value
-    });
-  }
-
-  // const validatePhoneNumber = (phoneNumber, countryCode) => {
-  //   try {
-  //     const parsedPhoneNumber = isValidPhoneNumber(`+${phoneNumber}`, countryCode);
-  //     return parsedPhoneNumber ? null : 'Invalid phone number';
-  //   } catch (error) {
-  //     return 'Invalid phone number';
-  //   }
-  // };
-
-  // const validateForm = (data) => {
-  //   const errors = {};
-
-  //   // Validate each field and add errors if necessary
-  //   if (!data.first_name.trim()) {
-  //     errors.first_name = "First name is required.";
-  //   }
-
-  //   if (!data.last_name.trim()) {
-  //     errors.last_name = "Last name is required.";
-  //   }
-
-  //   if (!data.phone_number.trim()) {
-  //     errors.phone_number = "Phone number is required.";
-  //   }
-
-  //   // else if (!/^\d{10}$/.test(data.phone_number)) {
-  //   //   errors.phone_number = "Phone number must be 10 digits.";
-  //   // }
-  //   else if (validatePhoneNumber(data.phone_number, data.country_code)) {
-  //     errors.phone_number = 'Invalid phone number'
-  //   }
-
-
-  //   if (!data.email.trim()) {
-  //     errors.email = "Email is required.";
-  //   } else if (!/\S+@\S+\.\S+/.test(data.email)) {
-  //     errors.email = "Invalid email address.";
-  //   }
-
-  //   // if (!data.company_name.trim()) {
-  //   //   errors.company_name = "Company name is required.";
-  //   // }
-  //   if (!data.industry.trim()) {
-  //     errors.industry = "Choose Your Industry.";
-  //   }
-
-  //   if (data.category === "") {
-  //     errors.category = "Choose a Category.";
-  //   }
-  //   if (!data.message.trim()) {
-  //     errors.message = "Enter your message with atleast 100 Character";
-  //   }
-
-  //   if (!agree1) {
-  //     errors.agree1 = "Please agree the above terms and condition to proceed."
-  //   }
-  //   if (!agree2) {
-  //     errors.agree2 = "Please agree the above terms and condition to proceed."
-  //   }
-  //   return errors;
-  // };
-  // const handleSubmit = async (e) => {
-  //   console.log("entered into handle submit")
-  //   // e.preventDefault();
-
-  //   // Validate the form fields
-  //   const validationErrors = validateForm(formData);
-  //   console.log("validation errors", validationErrors)
-  //   console.log("formData", formData)
-  //   setErrors(validationErrors);
-
-  //   if (Object.keys(validationErrors).length === 0) {
-  //     const phoneNumberWithoutCountryCode = formData.phone_number.substring(formData.country_code.length);
-  //     const updatedFormData = { ...formData, phone_number: phoneNumberWithoutCountryCode, country_code: `+${formData.country_code}` };
-
-  //     // Perform the API call
-  //     setIsLoading(true)
-  //     API.post("/contact_us/", updatedFormData).then((response) => {
-  //       // Handle the API response as needed
-  //       setIsLoading(false)
-  //       setMessage("Your Message is sent Succesfully! Our team will contact you shortly. Thank you for showing interest in ZOG Global.");
-  //       setIsMessageModalOpen(true)
-  //       window.localStorage.removeItem("emailForSignup")
-
-  //     })
-  //       .catch(error => {
-  //         // Handle API errors
-  //         setIsLoading(false)
-
-  //         setMessage(error.message);
-  //         setIsErrorModalOpen(true)
-  //       })
-  //   }
-  // };
-
-
-  const [scrollDirection, setScrollDirection] = useState(null);
-  const [lastScrollY, setLastScrollY] = useState(0);
-
-  const handleScroll = () => {
-    const currentScrollY = window.scrollY;
-    if (currentScrollY < lastScrollY) {
-      setScrollDirection('down');
-    } else {
-      setScrollDirection('up');
-    }
-    setLastScrollY(currentScrollY);
-  };
-
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, [lastScrollY]);
-
-
-  const sliderRef = useRef(null)
-  const sliderRef2 = useRef(null)
-  const next = () => {
-    sliderRef.current.slickNext();
-  };
-
-  const previous = () => {
-    sliderRef.current.slickPrev();
-  };
-  const next2 = () => {
-    sliderRef2.current.slickNext();
-  };
-
-  const previous2 = () => {
-    sliderRef2.current.slickPrev();
-  };
-
-
-
-
-
-
-
-  const [blogData, setBlogData] = useState(null);
-
-
-  useEffect(() => {
-
-    // API.get("blogs/?page_name=generic&section_number=1")
-
-    //   .then((response) => {
-
-    //     setBlogData(response.data.slice(0, 4)); // Only take the first 4 items
-    //     setIsLoading(false)
-
-
-
-    //   })
-    //   .catch((error) => {
-    //     if (error.response) {
-    //       setMessage(error.response.data.message);
-    //       setIsErrorModalOpen(true)
-    //     }
-    //     setIsLoading(false)
-
-    //   });
-  }, [blogData])
-
-
-
-
-
   return (
-    <div className="home-page">
-    
-      <div className="banner">
-        <div className="inner ">
-          <div
-            className="main-heading only-web montserrat-hard"
-            // style={{ color: `rgba(255, 255, 255, ${1 - opacity * 3})` }}>
-            style={{ color: `rgba(255, 255, 255, 1)` }}>
-           Health
-            <br />for Those Who Matter
+    <div className='home-page'>
 
-          </div>
-          <div
-            className="main-heading only-tab montserrat-hard"
-            style={{ color: `rgba(255, 255, 255, 1)` }}>
-            Oval
-            <br />Group of
-            <br /> Hi-Tech Farms
-          </div>
-          <div
-            className="main-heading only-mob montserrat-hard"
-            style={{ color: `rgba(255, 255, 255, 1)` }}>
-         
-            Oval
-            <br /> Group of
-            <br />Hi-Tech Farms
-          </div>
-          <button
+      {/* ---------- Hero ---------- */}
+      <section className='hero'>
+        <picture className='hero-bg'>
+          <source media='(max-width: 767px)' srcSet={`${IMAGES}/home/hero-mob.jpg`} />
+          <source media='(max-width: 1200px)' srcSet={`${IMAGES}/home/hero-1100.jpg`} />
+          <img src={`${IMAGES}/home/hero-1920.jpg`} alt='' />
+        </picture>
+        <div className='hero-overlay'></div>
 
-            className="button-primary "
-           
-            onClick={() => navigate("/contact-us")}>
-            BUY FRESH MUSHROOMS
-          </button>
-        </div>
-        <div
-          className="bannerimg-home "
-          style={{
-            backgroundImage: `url(${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/banner-web.png)`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}></div>
-      </div>
-
-      {/* <div style={{ display: "none" }}>
-        {videoSrc && (
-          <video autoPlay playsinline muted={!bannerSoundOn} loop>
-            {/* playsinline   is for i phone autoplay*/}
-      {/* <source src={videoSrc} type="video/mp4" />
-          </video>
-        )}
-
-        <div
-          className="mask"
-          style={{ background: `rgba(0, 0, 0, ${0.568 + opacity})` }}>
-          {bannerSoundOn ? (
-            <img
-              src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/speaker-unmuted.svg`}
-              onClick={() => setBannerSoundOn(!bannerSoundOn)}
-              style={{ opacity: `${1 - opacity * 3}` }}></img>
-          ) : (
-            <img
-              src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/speaker-muted.svg`}
-              onClick={() => setBannerSoundOn(!bannerSoundOn)}
-              style={{ opacity: `${1 - opacity * 3}` }}></img>
-          )}
-        </div>
-      </div> */}
-
-      {/* <div className='sec-2'>
-        <p className='title only-web' id="scrolling-text-web" >
-          Transform with confidence—<br />innovative IT, seamless digital<br />experiences, robust security.<br /> Your trusted partner for every<br /> step.
-        </p>
-
-        <div className='title only-tab' id="scrolling-text-tab" >
-          Transform with confidence—<br />innovative IT, seamless digital<br />experiences, robust security.<br /> Your trusted partner for every<br /> step.
-        </div>
-        <div className='title only-mob' id="scrolling-text-mob" >
-          Transform with confidence— innovative IT, seamless digital experiences, robust security. Your trusted partner for every step.
-        </div>
-
-        <video autoPlay muted loop className='d-none d-md-block animation' id='sec-2-animation-web-tab'  >
-          <source src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-video-web.mp4" type="video/mp4" />
-        </video>
-
-        <video autoPlay muted loop className='d-block d-md-none animation' id='sec-2-animation-mob'>
-          <source src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-video-mob.mp4" type="video/mp4" />
-        </video>
-      </div> */}
-
-      <div className="section2-homepage">
-        <div className="imglogo-line-home">
-          <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-text-image.png`}
-            className="textlogo-homepage"
-          />
-
-          <div className="blueline"></div>
-        </div>
-
-        <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/bg-triangle.png`}
-          className="trianglelogo-homepage"
-        />
-
-        <div className="slider-container montserrat-lit">
-
-
-          <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-left-arrow.svg`} className='arrow2-home' onClick={previous} />
-          <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-right-arrow.svg`} className='arrow1-home' onClick={next} />
-          <Slider ref={sliderRef} {...settings}>
-            <div>
-              <div className='hm1' onClick={()=>navigate('/software-development')}>
-                <div
-                  className="sliderimg"
-                >
-                  <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-1.jpg`} className='imo' />
-                  <div className='title'>White Oyster Mushrooms</div>
-                  <p>We deliver fresh White oyster mushrooms directly to your home</p>
-
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className='hm1' onClick={()=>navigate('/cloud')}>
-                <div
-                  className="sliderimg"
-                >
-                  <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-2.jpg`} className='imo' />
-                  <div className='title'>Grey Oyster Mushrooms</div>
-                  <p>We have grey veriety of oyster mushrooms too, to make your flavour vivid.</p>
-
-                </div>
-              </div>
-            </div>
-
-
-            <div>
-              <div className='hm1' onClick={()=>navigate('/cloud')}>
-                <div
-                  className="sliderimg"
-                >
-                  <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-7.webp`} className='imo' />
-                  <div className='title'>Dried Mushrooms</div>
-                  <p>Tired of Buying Everyday? Stock our Shade Dried Mushrooms which have 6 months of Shelflife and have all goodness of fresh mushrooms.</p>
-
-                </div>
-              </div>
-            </div>
-
-
-            <div>
-              <div className='hm1' onClick={()=>navigate('/cloud')}>
-                <div
-                  className="sliderimg"
-                >
-                  <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-8.jpg`} className='imo' />
-                  <div className='title'> Mushroom Powder</div>
-                  <p>Enhance both taste and nutritional value by adding a pinch of mushroom powder to all your daily dishes.</p>
-
-                </div>
-              </div>
-            </div>
-
-
-            <div>
-              <div className='hm1' onClick={()=>navigate('/automation')}>
-                <div
-                  className="sliderimg"
-                >
-                  <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-3.jpg`} className='imo' />
-                  <div className='title'>Mushroom Spawn</div>
-                  <p>Planning to cultivate mushrooms? We have high quality mushroom spawn.</p>
-
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className='hm1' onClick={()=>navigate('/devops')}>
-                <div
-                  className="sliderimg"
-                >
-                  <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-4.jpg`} className='imo' />
-                  <div className='title'>Mushroom Beds</div>
-                  <p>Wish to reduce cost and eat mushrooms grown by yourself without any technical knowledge? Just by our ready to pluck beds</p>
-                </div>
-              </div>
-
-            </div>
-
-
-            <div>
-              <div className='hm1' onClick={()=>navigate('/devsecops')}>
-                <div
-                  className="sliderimg"
-                >
-                  <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-5.jpg`} className='imo' />
-                  <div className='title'>Home Delivery</div>
-                    <p>We deliver at your Doorstep on orders above 900gms</p>
-
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <div className='hm1' onClick={()=>navigate('/advanced-networking-services')}>
-                <div
-                  className="sliderimg"
-                >
-                  <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-2-6.webp`} className='imo' />
-
-                  <div className='title'>Subscription Plans</div>
-                    <p>Switching to a healthy diet needs consistency. You dont need to worry about placing orders everyday. Just subscribe to our daily, weekly plans. </p>
-
-                </div>
-              </div>
-            </div>
-
-           
-          </Slider>
-        </div>
-      </div>
-
-
-      <div className="subsection3-home">
-        <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-3.svg`} className="build4u" alt="Build 4U" />
-        <span className="bl4text montserrat-hard">
-          FOOD
-          <span className={`rotating-text ${scrollDirection === 'up' ? 'rotate' : ''}`}>
-            4
+        <div className='hero-content'>
+          <span className='hero-eyebrow'>
+            <Icon name='mushroom' size={16} /> Oval Hi-Tech Farms · Kozhikode
           </span>
-
-
-          <br />
-          HEALTH
-        </span>
-        <p className="montserrat-lit">
-          <span className="montserrat-hard">Health without compromising Taste</span>
-          <br />
-          You no longer need to compromise taste to keep you healthy. <br/>Just Switch to MUSHROOMS!!
-        </p>
-      </div>
-
-      <div className="sec4-homepage">
-        <div className="bluecontainer-homepage montserrat-hard">
-          <p>Mushroom Dishes</p>
-          <div className="hr1-homepage"></div>
-          <div className='arr-absl'>
-            <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-4-left-arrow.svg`} className='arr-homepage' onClick={previous2} />
-            <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-4-right-arrow.svg`} className='arr-homepage' onClick={next2} />
+          <h1>
+            Health for <em>those who matter.</em>
+          </h1>
+          <p>
+            Fresh oyster mushrooms and nutritious mushroom products, grown on our
+            hi-tech farm and delivered to your doorstep.
+          </p>
+          <div className='hero-actions'>
+            <Link to={ORDER_LINK} className='btn-primary'>
+              Buy Fresh Mushrooms <Icon name='arrow' size={18} strokeWidth={2.2} />
+            </Link>
+            <Link to='/home#products' className='btn-ghost'>Explore Products</Link>
           </div>
         </div>
+      </section>
 
-        <div className="secondbluecontainer-homepage">
-          <div className="slider-container montserrat-lit">
-            <Slider ref={sliderRef2} {...settings2}>
+      {/* ---------- Highlights ---------- */}
+      <section className='highlights'>
+        <div className='highlights-inner reveal'>
+          {HIGHLIGHTS.map((item) => (
+            <div className='highlight' key={item.title}>
+              <span className='icon-badge'><Icon name={item.icon} /></span>
               <div>
-                <div className="pageinslider montserrat-lit">
-                  <span>01</span>
-                  <p>Mushroom Fry</p>
-                </div>
-                <div
-                  className="sliderimg"
-                  style={{
-                    backgroundImage:
-                      `url(${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-4-1.jpg)`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}>
-
-                </div>
-              </div>
-
-              <div>
-                <div className="pageinslider montserrat-lit">
-                  <span>02</span>
-                  <p>Mushroom Dry Fry</p>
-                </div>
-                <div
-                  className="sliderimg"
-                  style={{
-                    backgroundImage:
-                      `url(${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-4-2.jpg)`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}>
-
-                </div>
-              </div>
-
-              <div>
-                <div className="pageinslider montserrat-lit">
-                  <span>03</span>
-                  <p>Mushroom Curry</p>
-                </div>
-                <div
-                  className="sliderimg"
-                  style={{
-                    backgroundImage:
-                      `url(${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-4-3.webp)`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}>
-
-                </div>
-              </div>
-
-              <div>
-                <div className="pageinslider montserrat-lit">
-                  <span>04</span>
-                  <p>Mushroom Upperi</p>
-                </div>
-                <div
-                  className="sliderimg"
-                  style={{
-                    backgroundImage:
-                      `url(${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-4-4.jpg)`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}>
-
-                </div>
-              </div>
-
-              <div>
-                <div className="pageinslider montserrat-lit">
-                  <span>05</span>
-                  <p>Mushroom Fry</p>
-                </div>
-                <div
-                  className="sliderimg"
-                  style={{
-                    backgroundImage:
-                      `url(${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-4-1.jpg)`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}>
-
-                </div>
-              </div>
-
-              <div>
-                <div className="pageinslider montserrat-lit">
-                  <span>06</span>
-                  <p> Mushroom Dry Fry</p>
-                </div>
-                <div
-                  className="sliderimg"
-                  style={{
-                    backgroundImage:
-                      `url(${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-4-2.jpg)`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}>
-
-                </div>
-              </div>
-            </Slider>
-          </div>
-        </div>
-      </div>
-
-
-      <div className='sec5-homepage'>
-        <div className='linediv-home'>
-          <div className='hr2'></div>
-        </div>
-        <div className='contentdiv-home montserrat-hard'>
-          <p className='montserrat-hard'>Benefits of <span>Mushrooms</span></p>
-        </div>
-
-
-      </div>
-
-
-
-      <div className='sec6-homepage'>
-        <div className='maincontentdiv-sec6-home'>
-          {sec6Data.map((section, index) => (
-            <div className='firstdiv-sec6' key={index}>
-              <div className='title-sec6' onClick={() => handleSectionClick(index)}>
-                <span className='montserrat-hard'>{section.title}</span>
-                <img
-                  src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-down-arrow.svg`}
-                  alt="Toggle Content"
-                  className={activeSection === index ? 'rotate' : ''}
-                />
-              </div>
-              <div className={`content-s6 ${activeSection === index ? 'show' : ''}`}>
-                <p>{section.content}</p>
+                <strong>{item.title}</strong>
+                <span>{item.text}</span>
               </div>
             </div>
           ))}
         </div>
-        <div className='forimage-sec6-home'>
-          {activeSection !== null ? (
-            <img
-              src={sec6Data[activeSection].path}
-              className='sec6-img'
-              alt={sec6Data[activeSection].title}
-            />
-          ) :
-            <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/sec-6-1.jpg`} className='sec6-img' />}
+      </section>
+
+      {/* ---------- Products ---------- */}
+      <section className='products' id='products'>
+        <div className='section-head reveal'>
+          <span className='eyebrow'>Our Products</span>
+          <h2>From our farm, for your family</h2>
+          <p>Fresh, dried and grow-your-own. Everything mushroom, produced with care.</p>
         </div>
 
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{/* 
-      <div className='sec7-homepage'>
-
-        <div className='forimage-sec7' style={{
-          backgroundImage:
-            `url(${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Contact-form-home.png`})',
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}>
-
-
-
-
-
-          <form onSubmit={handleSubmit} noValidate className='form-homepage'>
-            <div className='textbox urbanist-lit'>
-              <div className='f1-box'>
-                <label className='labbox'>First name<span>*</span></label>
-                <input type='text'
-                  id="first_name"
-                  name="first_name"
-                  className={`inpbox form-control-lg ${errors.first_name ? "is-invalid" : ""}`}
-                  value={formData.first_name}
-                  onChange={handleChange}
-                  placeholder='First Name'
-                />
-                {errors.first_name && <div className="invalid-feedback-home">{errors.first_name}</div>}
-
-
+        <div className='product-grid'>
+          {PRODUCTS.map((product, index) => (
+            <article className='product-card reveal' key={product.title} style={{ transitionDelay: `${(index % 3) * 80}ms` }}>
+              <div className='product-image'>
+                <img src={product.image} alt={product.title} loading='lazy' />
+                <span className='product-tag'>{product.tag}</span>
               </div>
-              <div className='f1-box'>
-                <label className='labbox'>Last name <span>*</span></label>
-                <input type='text'
-                  id="last_name"
-                  name="last_name"
-                  className={`inpbox form-control-lg ${errors.last_name ? "is-invalid" : ""}`}
-                  value={formData.last_name}
-                  onChange={handleChange}
-                  placeholder='Last Name'
-                />
-                {errors.first_name && <div className="invalid-feedback-home">{errors.last_name}</div>}
+              <div className='product-body'>
+                <h3>{product.title}</h3>
+                <p>{product.text}</p>
+                <a href={SITE_INFO.whatsappLink} target='_blank' rel='noreferrer' className='product-link'>
+                  Order now <Icon name='arrow' size={16} strokeWidth={2.2} />
+                </a>
               </div>
+            </article>
+          ))}
+        </div>
+      </section>
 
+      {/* ---------- Food 4 Health ---------- */}
+      <section className='food4health'>
+        <div className='food4health-inner reveal'>
+          <div className='f4h-word' aria-label='Food for health'>
+            <span>FOOD</span>
+            <span className={`f4h-four ${spinFour ? 'spin' : ''}`}>4</span>
+            <span>HEALTH</span>
+          </div>
+          <div className='f4h-text'>
+            <h2>Health without compromising taste</h2>
+            <p>
+              You no longer need to give up flavour to stay healthy. Just switch
+              to mushrooms! They are tasty, filling and packed with nutrition.
+            </p>
+            <Link to='/home#benefits' className='text-link'>
+              See the benefits <Icon name='arrow' size={18} strokeWidth={2.2} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- Recipes ---------- */}
+      <section className='recipes' id='recipes'>
+        <div className='section-head row reveal'>
+          <div>
+            <span className='eyebrow'>Mushroom Dishes</span>
+            <h2>Kerala favourites, made with mushrooms</h2>
+          </div>
+        </div>
+        <ScrollRow className='reveal' label='Mushroom dishes'>
+          {DISHES.map((dish, index) => (
+            <figure className='dish-card' role='listitem' key={dish.title}>
+              <img src={dish.image} alt={dish.title} loading='lazy' />
+              <figcaption>
+                <span className='dish-number'>{String(index + 1).padStart(2, '0')}</span>
+                {dish.title}
+              </figcaption>
+            </figure>
+          ))}
+        </ScrollRow>
+      </section>
+
+      {/* ---------- Benefits ---------- */}
+      <section className='benefits' id='benefits'>
+        <div className='section-head reveal'>
+          <span className='eyebrow'>Why Mushrooms</span>
+          <h2>Benefits of mushrooms</h2>
+          <p>Small in calories, big on goodness. Here is what a regular serving does for you.</p>
+        </div>
+        <div className='benefit-grid'>
+          {BENEFITS.map((benefit, index) => (
+            <div className='benefit-card reveal' key={benefit.title} style={{ transitionDelay: `${(index % 5) * 60}ms` }}>
+              <span className='icon-badge'><Icon name={benefit.icon} /></span>
+              <h3>{benefit.title}</h3>
+              <p>{benefit.text}</p>
             </div>
-            <div className='textbox urbanist-lit'>
-              <div className='f1-box'>
-                <label className='labbox'>email<span>*</span></label>
-                <input type='text'
-                  id="email"
-                  name="email"
-                  className={`inpbox form-control-lg ${errors.email ? "is-invalid" : ""}`}
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder='Company Email'
-                />
-                {errors.email && <div className="invalid-feedback-home">{errors.email}</div>}
-              </div>
-              <div className='f1-box'>
-                <label className='labbox'>country <span>*</span></label>
-                <select type='text' className=' form-control-lg' value={formData.country} name='country'  onChange={handleChange} >
-                  {countries && countries.map((item, index) => {
-                    return (
-                      <option value={item} label={item}></option>
-                    )
-                  })}
-                </select>
-
-              </div>
-
-            </div>
-            <div className='textbox urbanist-lit'>
-              <div className='f1-box'>
-                <label className='labbox'>Phone No.<span>*</span></label>
-                <PhoneInput
-                  inputProps={{
-                    name: 'phone_number',
-                    id: 'phone_number',
-                    className: 'inpboxph form-control-lg',
-                    placeholder: 'Phone Number',
-                  }}
-                  country={'gb'}
-                  value={formData.phone_number}
-                  onChange={(value, country) => handlePhoneChange(value, country)}
-                />
-                {errors.phone_number && <div className="invalid-feedback-home">{errors.phone_number}</div>}
-              </div>
-
-              <div className='f1-box'>
-                <label className='labbox'>company <span>*</span></label>
-                <input type='text'
-                  id="company_name"
-                  name="company_name"
-                  className={`inpbox form-control-lg ${errors.company_name ? "is-invalid" : ""}`}
-                  value={formData.company_name}
-                  onChange={handleChange}
-                  placeholder='Company Name'
-                />
-
-              </div>
-              {errors.company_name && <div className="invalid-feedback-home">{errors.company_name}</div>}
-
-            </div>
-            
-            <div className='textbox urbanist-lit'>
-              <div className='f2-box'>
-                <label className='labbox'>Type of Enquiry<span>*</span></label>
-                <select type='text'
-                  id="message"
-                  name="category"
-                  className={`inpbox2 form-control-lg ${errors.category ? "is-invalid" : ""}`}
-                  value={formData.category}
-                  onChange={handleChange}
-                  placeholder='Select here..'
-                >
-                      <option value="General Enquiry" label="General Enquiry"></option>
-                      <option value="Cyber Security" label="Cyber Security"></option>
-                      <option value="Software Development" label="Software Development"></option>
-
-                </select>
-                {errors.category && <div className="invalid-feedback-home">{errors.category}</div>}
-              </div>
-
-            </div>
-
-            <div className='textbox urbanist-lit'>
-              <div className='f2-box'>
-                <label className='labbox'>Message<span>*</span></label>
-                <textarea type='text'
-                  id="message"
-                  name="message"
-                  className={`inpbox2 form-control-lg ${errors.message ? "is-invalid" : ""}`}
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder='Type your message here..'
-                ></textarea>
-                {errors.message && <div className="invalid-feedback-home">{errors.message}</div>}
-              </div>
-
-            </div>
-
-            
-            <button>
-              SEND
-            </button>
-
-
-          </form>
-
-
-
-          <div className='pack'>
-            <p className='montserrat-hard'>From Code to Success</p>
-            <button
-              className="button montserrat-hard "
-              onClick={() => navigate("/contact-us")}>
-              DISCUSS WITH US
-            </button>
-
-          </div>
-
-
+          ))}
         </div>
-        <div className='forcontent-sec7'>
-          <div className='title-sec7-in montserrat-hard'>
-            Tech Stack
+      </section>
 
-          </div>
-          <div className='logo-small-home'>
-
-            <div className="slider-container">
-              <Slider {...settings3}>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Dark.png`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Tech Stack Logos\reactjs\Dark.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Dark.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 46.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 33.svg`} className='img-sec7-small' />
-
-                  </div>
-
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 65.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 66.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 73.svg`} className='img-sec7-small' />
-
-                  </div>
-
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 74.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Dark.png`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Tech Stack Logos\reactjs\Dark.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Dark.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 46.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-
-
-
-              </Slider>
-
-
-
-
-
-
-
-
-
-              <Slider {...settings4}>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/logo21.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 98.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 25.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 39.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 49.svg`} className='img-sec7-small' />
-
-                  </div>
-
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 51.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 58.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 21.svg`} className='img-sec7-small' />
-
-                  </div>
-
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 24.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 25.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 39.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 49.svg`} className='img-sec7-small' />
-
-                  </div>
-
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 51.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 58.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 21.svg`} className='img-sec7-small' />
-
-                  </div>
-
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 24.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-
-
-              </Slider>
-
-
-
-
-
-
-
-              <Slider {...settings3}>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 100.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 99.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Vector.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 91.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 92.svg`} className='img-sec7-small' />
-
-                  </div>
-
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 95.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 94.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 97.svg`} className='img-sec7-small' />
-
-                  </div>
-
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 96.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 93.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 79.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 85.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 94.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 92.svg`} className='img-sec7-small' />
-
-                  </div>
-
-                </div>
-
-                <div>
-                  <div className='smallbox-sec7'>
-                    <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/Group 95.svg`} className='img-sec7-small' />
-
-                  </div>
-                </div>
-
-
-
-
-              </Slider>
-            </div>
-
-
-          </div>
-
-        </div>
-
-      </div> */}
-
-
-
-
-
-      <div className='sec8-homepage'>
-        <p className='montserrat-hard'>Blog Highlights</p>
-        <div className='boxcontent-sec8'>
-          <div className='firstsec8'>
-            {blogData && blogData.slice(0, 2).map((blog, index) => (
-              <div key={index} className='box1 montserrat-lit '
-                style={{
-                  backgroundImage: `url(${blog.image_url})`,
-                  backgroundSize: "cover",
-                }}
-                onClick={() => navigate(`/blog-details/${blog.id}`)}>
-                  <div className='inner'>
-                <p className='montserrat-hard'>
-                  {blog.title}</p>
-                <span>{blog.extra}</span>
-                <span>{blog.created_at}</span>
-                <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/arrow-bl-anim.svg`} className='arrow-sec8' />
-</div>
-              </div>
-            ))}
-
-
-
-          </div>
-          <div className='secondsec8'>
-            {blogData && blogData.slice(2, 3).map((blog, index) => (
-              <div className='box3 montserrat-lit ' style={{
-                backgroundImage: `url(${blog.image_url})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}>
-                <div className='inner'>
-                <p className='montserrat-hard'>{blog.title}</p>
-                <span>{blog.extra}</span>
-                <span>{blog.created_at}</span>
-                <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/arrow-bl-anim.svg`} className='arrow-sec8' />
-
-                </div> 
-                </div>
-            ))}
-            {blogData && blogData.slice(3, 4).map((blog, index) => (
-              <div className='box4 montserrat-lit ' style={{
-                backgroundImage: `url(${blog.image_url})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}>
-                <div className='inner'>
-                <p className='montserrat-hard'>{blog.title}</p>
-                <span>{blog.extra}</span>
-                <span>{blog.created_at}</span>
-                <img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/home/arrow-bl-anim.svg`} className='arrow-sec8' />
-                </div>
-              </div>
-            ))}
-
-          </div>
-
-        </div>
-
-
-      </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      {/* <div className='sec-5 d-none d-lg-block'>
-        <div className='title'>
-          INDUSTRIES WE COVER
-        </div>
-        <div className='tab-view'>
-          <div className="tab-btn-container">
-            {sec5Data.map((item, index) => {
-              return (
-                <div key={index} className={tabSelected == index ? "tab-btn active" : 'tab-btn'} onClick={() => selectTab(index)}><div className='number'>{index < 9 && "0"}{index + 1}</div><div className='text'>{item.title}</div></div>
-
-              )
-            })}
-          </div>
-          <div className='tab-content-container' >
-            {sec5Data.map((item, index) => {
-              return (
-                <div className={tabSelected == index ? "tab-content active" : 'tab-content'} key={index}>
-                  <p>{item.description}</p>
-                  <button className='btn-transparent-arrow' onClick={() => navigate(item.link)}>Learn More</button>
-                </div>
-              )
-            })}
-
-            <div className='line'></div>
-
-
-          </div>
-        </div>
-      </div>  */}
-
-      {/* 
-       <div className='sec-5 d-block d-lg-none'>
-        <div className='title'>
-          INDUSTRIES WE COVER
-        </div>
-        <div className='tab-view'>
-
-          {sec5Data.map((item, index) => {
-            return (
-              <div key={index}>
-                <div className={tabSelected == index ? "tab-btn active" : 'tab-btn'} onClick={tabSelected === index ? () => selectTab(null) : () => selectTab(index)}><div className='number'>{index < 9 && "0"}{index + 1}</div><div className='text'>{item.title}</div></div>
-                <div className='tab-content-container' onClick={() => { selectTab(null) }}>
-                  <div className={tabSelected == index ? "tab-content active" : 'tab-content'}>
-                    <p>{item.description}</p>
-                    <button className='btn-transparent-arrow' onClick={() => navigate(item.link)}>Learn More
-                    </button>
-                  </div>
-                  <div className='line'></div>
-                </div>
-              </div>
-            )
-          })}
-
-
-
-        </div>
-      </div> */}
-
-      {isLoading && <FixedOverlayLoadingSpinner />}
-
-      <ErrorModal
-        state={isErrorModalOpen}
-        message={message}
-        setterFunction={setIsErrorModalOpen}
-        okClickedFunction={() => navigate("/")}
-      />
-      {isMessageModalOpen && (
-        <PositiveModal
-          message={message}
-          setterFunction={setIsMessageModalOpen}
-          okClickedFunction={() => { }}
-        />
-      )}
     </div>
-  );
-
-
+  )
 }
 
-export default Userhome
+export default Home

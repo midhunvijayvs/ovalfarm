@@ -1,8 +1,6 @@
-.app-content{
-    background-color: #FFF !important;
-   width: 100vw;
-   height: fit-content;
-   scroll-behavior: smooth;
+.app-content {
+  display: block;
+  width: 100%;
+  min-height: 60vh;
+  background-color: #fff;
 }
-
-

@@ -1,5 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap");
 
+/* Oval Farms theme colours (same values as src/styles/_theme.scss) */
+:root {
+  --of-green: #1d9b09;
+  --of-green-dark: #12650a;
+  --of-green-deep: #0b2e0d;
+  --of-green-soft: #e8f5e3;
+  --of-cream: #fbf9f3;
+  --of-orange: #d75701;
+  --of-ink: #14201a;
+}
+
 html{
   scroll-behavior: smooth !important;
   font-size: 16px;
@@ -7,6 +18,8 @@ html{
 
 body {
   margin: 0;
+  font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background: #fff;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #000;
@@ -39,7 +52,7 @@ img {
   width: 95px;
   height: 7px;
   border-radius: 30px;
-  background: #26e333;
+  background: #1d9b09;
   position: absolute;
   top: -5px;
   left: 0;
@@ -112,13 +125,13 @@ button {
 }
 .button-black-box:hover{
   color:#fff ;
-  border: 2px solid #26e333;
-  background-color: #26e333;
+  border: 2px solid #1d9b09;
+  background-color: #1d9b09;
 
 }
 .button-black-box:focus{
-  color:#26e333 ;
-  border: 2px solid #26e333;
+  color:#1d9b09 ;
+  border: 2px solid #1d9b09;
   background-color: #fff;
 
 }
@@ -137,13 +150,13 @@ button {
 }
 .button-white-box:hover{
   color:#fff ;
-  background-color: #26e333;
-  border: 2px solid #26e333;
+  background-color: #1d9b09;
+  border: 2px solid #1d9b09;
 
 }
 .button-white-box:focus{
-  color:#26e333 ;
-  border: 2px solid #26e333;
+  color:#1d9b09 ;
+  border: 2px solid #1d9b09;
   background-color: #000;
 
 }

@@ -1,139 +1,103 @@
-import React, {useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import './Header.scss'
-import { Link } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom';
-import LogoutPopup from "../../authentication/LogoutPopup";
-import $ from 'jquery';
-import NavPane from './NavPane/NavPane';
+import { NAV_LINKS, ORDER_LINK } from './navLinks'
 
+const IMAGES = process.env.REACT_APP_PUBLIC_IMAGES_URL
 
-const Header = ({ userData, isLoggedIn, setSearchKey, selectCategory }) => {
+const Header = () => {
+  const location = useLocation()
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setMenuOpen] = useState(false)
 
-  const navigate = useNavigate();
-
-  const [isLogoutModalShow, setLogoutModalShow] = useState(false)
-
-
-  const [isNavpaneOpen, setNavPaneOpen] = useState(false);
-
-  const[currentPageIndex, setCurrentPageIndex]=useState(0);
-
-  // For Security popup, not implemented, but the states are just to make the switch UI work
-
-useEffect(()=>{
-
-setCurrentPageIndex(localStorage.getItem("currentPageIndex"))
-},[])
-
+  // Add a shadow once the page is scrolled
   useEffect(() => {
-    if (isNavpaneOpen) {
-      $(".nav-pane").animate({ left: "0vw" })
-      // $(".nav-pane").animate({ width: "100vw" })
-    }
-    else {
-      // $(".nav-pane").animate({ width: "0%" })
-      $(".nav-pane").animate({ left: "100vw" })
+    const handleScroll = () => setIsScrolled(window.scrollY > 8)
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
-
-    }
-  }, [isNavpaneOpen])
-
-
-  //   useEffect(() => {
-  //     const handleScroll = () => {
-  //       const header = document.getElementById('header');
-  //       const headerRect = header.getBoundingClientRect();
-  //       const elementsUnderHeader = document.elementsFromPoint(headerRect.left + headerRect.width / 2, headerRect.bottom + 1);
-  //       const divUnderneathElements = elementsUnderHeader.filter(element => element.id !== 'header');
-
-  //       if (divUnderneathElements.length > 0) {
-  //         let totalRed = 0;
-  //         let totalGreen = 0;
-  //         let totalBlue = 0;
-
-  //         divUnderneathElements.forEach(element => {
-  //           const computedStyle = window.getComputedStyle(element);
-  //           const backgroundColor = computedStyle.backgroundColor;
-
-  //           // Parse background color into RGB components
-  //           const [red, green, blue] = backgroundColor.match(/\d+/g).map(Number);
-
-  //           totalRed += red;
-  //           totalGreen += green;
-  //           totalBlue += blue;
-  //         });
-
-  //         const averageRed = Math.round(totalRed / divUnderneathElements.length);
-  //         const averageGreen = Math.round(totalGreen / divUnderneathElements.length);
-  //         const averageBlue = Math.round(totalBlue / divUnderneathElements.length);
-
-  //         const invertedRed = 255 - averageRed;
-  //   const invertedGreen = 255 - averageGreen;
-  //   const invertedBlue = 255 - averageBlue;
-
-  //   setHeaderBackground(`rgb(${invertedRed}, ${invertedGreen}, ${invertedBlue})`);
-  // } else {
-  //   // If there are no divs underneath, set default background color
-  //   setHeaderBackground('transparent');
-  // }
-
-
-  //     }
-  //     window.addEventListener('scroll', handleScroll);
-
-  //     // Clean up event listener
-  //     return () => window.removeEventListener('scroll', handleScroll);
-  //   }, []);
-
-
+  // Close the mobile menu whenever the page or section changes
   useEffect(() => {
-    const handleScroll = () => {
+    setMenuOpen(false)
+  }, [location.pathname, location.hash])
 
-      const scrollPosition = window.scrollY;
+  // Stop the page behind the mobile menu from scrolling
+  useEffect(() => {
+    document.body.style.overflow = isMenuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [isMenuOpen])
 
-      // Check if scroll position is at 100vh
-      if (scrollPosition >= 5) {
-    $(".header").addClass("shrinked");
-      } else {
-    $(".header").removeClass("shrinked");
-
-      }
-
-
-    }
-    window.addEventListener('scroll', handleScroll);
-
-    // Clean up event listener
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-
-
-
+  // A link is active when its page (and section, if any) matches the current URL
+  const isActive = (to) => {
+    const [path, hash] = to.split('#')
+    if (location.pathname !== path) return false
+    return hash ? location.hash === `#${hash}` : !location.hash
+  }
 
   return (
-    <div className='header' id='header' >
-
-      <img className='app-logo' onClick={() => navigate('/')} role='button' src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/header/app-logo-header.svg`} alt='logo'></img>
-
-      <div className='text-menu-box'>
-        <span onClick={()=>{localStorage.setItem("currentPageIndex",1); setCurrentPageIndex(1); navigate("/why-zog-global")}} className={currentPageIndex===1&&"active"}>WHY MUSHROOMS</span>
-        <span onClick={()=>{localStorage.setItem("currentPageIndex",6);setCurrentPageIndex(6); navigate("/insights")}} className={currentPageIndex===6&&"active"}>ORDER NOW</span>
-        <span onClick={()=>{localStorage.setItem("currentPageIndex",7);setCurrentPageIndex(7); navigate("/contact-us")}} className={currentPageIndex===7&&"active"}>CONTACT</span>
+    <>
+      <div className='announcement-bar'>
+        <span>🍄 Fresh oyster mushrooms from our hi-tech farm</span>
+        <span className='dot'>•</span>
+        <span>Home delivery on orders above 900 g</span>
       </div>
-      <button className='login-btn' onClick={() => { localStorage.setItem("userRoleRequest", "user"); localStorage.setItem('LoginRedirectURL', `/`); navigate('/login') }}><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/header/login-icon.svg`}></img></button>
-      <button className='hamburger-btn' onClick={() => setNavPaneOpen(true)}><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/header/hamburger-icon.svg`}></img></button>
 
+      <header className={`site-header ${isScrolled ? 'scrolled' : ''}`} id='header'>
+        <div className='header-inner'>
+          <Link to='/home' className='brand' aria-label='Oval Farms home'>
+            <img src={`${IMAGES}/header/oval-logo.svg`} alt='Oval Hi-Tech Farm' />
+          </Link>
 
+          <nav className='main-nav' aria-label='Main menu'>
+            {NAV_LINKS.map((link) => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                className={() => (isActive(link.to) ? 'active' : '')}>
+                {link.label}
+              </NavLink>
+            ))}
+          </nav>
 
-      <NavPane setterFunction={setNavPaneOpen}></NavPane>
-      {isLogoutModalShow && <LogoutPopup setterFunction={setLogoutModalShow}></LogoutPopup>}
+          <div className='header-actions'>
+            <Link to={ORDER_LINK} className='order-btn'>
+              Order Now
+              <svg width='16' height='16' viewBox='0 0 24 24' fill='none' aria-hidden='true'>
+                <path d='M5 12h14M13 6l6 6-6 6' stroke='currentColor' strokeWidth='2.2' strokeLinecap='round' strokeLinejoin='round' />
+              </svg>
+            </Link>
+            <button
+              className={`menu-btn ${isMenuOpen ? 'open' : ''}`}
+              onClick={() => setMenuOpen(!isMenuOpen)}
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMenuOpen}>
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+        </div>
+      </header>
 
-    </div>
+      <div className={`mobile-menu ${isMenuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(false)}>
+        <nav className='mobile-menu-panel' onClick={(e) => e.stopPropagation()} aria-label='Mobile menu'>
+          {NAV_LINKS.map((link, index) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={isActive(link.to) ? 'active' : ''}
+              style={{ transitionDelay: isMenuOpen ? `${80 + index * 40}ms` : '0ms' }}>
+              {link.label}
+            </Link>
+          ))}
+          <Link to={ORDER_LINK} className='order-btn mobile'>Order Fresh Mushrooms</Link>
+          <p className='mobile-menu-note'>Oval Hi-Tech Farms · Perambra, Kozhikode</p>
+        </nav>
+      </div>
+    </>
   )
 }
 
-
 export default Header
-
-

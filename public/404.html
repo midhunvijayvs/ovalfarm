@@ -1,5 +1,17 @@
-<script>
-    // Redirect all requests to index.html. his file is added for github pages depoyement
-    window.location.href = "/";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Oval Farms</title>
+  <script>
+    // GitHub Pages single-page-app support (part 1 of 2, part 2 is in public/index.html).
+    // GitHub Pages shows this file for any address it doesn't know, such as /contact-us
+    // after a refresh. Remember the address and load the app, which then opens that page.
+    try {
+      sessionStorage.setItem('spaRedirect', location.pathname + location.search + location.hash);
+    } catch (e) { }
+    location.replace('/');
   </script>
-  
+</head>
+<body></body>
+</html>
