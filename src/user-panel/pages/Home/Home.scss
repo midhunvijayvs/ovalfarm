@@ -372,6 +372,7 @@
 
     .product-image {
       position: relative;
+      display: block;
       aspect-ratio: 4 / 3;
       overflow: hidden;
       background: $sand;
@@ -410,6 +411,33 @@
         line-height: 1.25;
         color: $green-900;
         margin: 0 0 8px;
+      }
+
+      h3 a {
+        color: inherit;
+        text-decoration: none;
+
+        &:hover {
+          color: $green;
+        }
+      }
+
+      .product-meta {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 12px;
+        margin-bottom: 14px;
+      }
+
+      .product-size {
+        padding: 3px 10px;
+        border-radius: 999px;
+        background: $cream;
+        border: 1px solid $sand;
+        font-size: 12px;
+        font-weight: 600;
+        color: $earth;
       }
 
       p {

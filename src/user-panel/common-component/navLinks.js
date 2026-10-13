@@ -3,10 +3,10 @@
 // "section" marks the link active on every page under that path.
 export const NAV_LINKS = [
   { label: 'Home', to: '/home' },
-  { label: 'Products', to: '/home#products' },
+  { label: 'Products', to: '/shop/list', section: '/shop' },
   { label: 'Why Mushrooms', to: '/why-mushrooms' },
   { label: 'Recipes', to: '/recipies/list', section: '/recipies' },
   { label: 'Contact', to: '/contact-us' },
 ];
 
-export const ORDER_LINK = '/contact-us';
+export const ORDER_LINK = '/shop/list';

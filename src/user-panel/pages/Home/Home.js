@@ -2,18 +2,20 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import './Home.scss'
 import Icon from './Icon'
-import { HIGHLIGHTS, PRODUCTS, BENEFITS } from './homeContent'
+import { HIGHLIGHTS, BENEFITS } from './homeContent'
 import { useLanguage } from '../../../i18n/LanguageContext'
 import { useRecipes, recipeLink } from '../Recipes/recipeHelpers'
-import { SITE_INFO } from '../../../siteInfo'
+import { useProducts, productLink, formatPackSize, SHOP_LIST_LINK } from '../Shop/shopHelpers'
+import ProductPrice from '../Shop/ProductPrice'
 import { ORDER_LINK } from '../../common-component/navLinks'
 
 const IMAGES = process.env.REACT_APP_PUBLIC_IMAGES_URL
 
-// Fades sections in as they scroll into view (elements with the "reveal" class)
-const useRevealOnScroll = () => {
+// Fades sections in as they scroll into view (elements with the "reveal" class).
+// "deps" re-runs it when content loads later, such as the products.
+const useRevealOnScroll = (deps = []) => {
   useEffect(() => {
-    const elements = document.querySelectorAll('.home-page .reveal')
+    const elements = document.querySelectorAll('.home-page .reveal:not(.is-visible)')
     if (!('IntersectionObserver' in window)) {
       elements.forEach((el) => el.classList.add('is-visible'))
       return
@@ -28,7 +30,8 @@ const useRevealOnScroll = () => {
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' })
     elements.forEach((el) => observer.observe(el))
     return () => observer.disconnect()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps)
 }
 
 // A horizontally scrolling row with previous / next buttons
@@ -55,8 +58,10 @@ const ScrollRow = ({ className, children, label }) => {
 }
 
 const Home = () => {
-  useRevealOnScroll()
   const { recipes } = useRecipes()
+  const { products } = useProducts()
+  const featuredProducts = products.filter((product) => product.is_featured)
+  useRevealOnScroll([featuredProducts.length])
   const { tr } = useLanguage()
 
   // The "4" in FOOD 4 HEALTH spins when you scroll back up
@@ -99,7 +104,7 @@ const Home = () => {
             <Link to={ORDER_LINK} className='btn-primary'>
               Buy Fresh Mushrooms <Icon name='arrow' size={18} strokeWidth={2.2} />
             </Link>
-            <Link to='/home#products' className='btn-ghost'>Explore Products</Link>
+            <Link to={SHOP_LIST_LINK} className='btn-ghost'>Explore Products</Link>
           </div>
         </div>
       </section>
@@ -119,27 +124,36 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ---------- Products ---------- */}
+      {/* ---------- Products (from the product data in Constants.js) ---------- */}
       <section className='products' id='products'>
-        <div className='section-head reveal'>
-          <span className='eyebrow'>Our Products</span>
-          <h2>From our farm, for your family</h2>
-          <p>Fresh, dried and grow-your-own. Everything mushroom, produced with care.</p>
+        <div className='section-head row reveal'>
+          <div>
+            <span className='eyebrow'>Our Products</span>
+            <h2>From our farm, for your family</h2>
+            <p>Fresh, dried and grow-your-own. Everything mushroom, produced with care.</p>
+          </div>
+          <Link to={SHOP_LIST_LINK} className='text-link'>
+            Visit the shop <Icon name='arrow' size={18} strokeWidth={2.2} />
+          </Link>
         </div>
 
         <div className='product-grid'>
-          {PRODUCTS.map((product, index) => (
-            <article className='product-card reveal' key={product.title} style={{ transitionDelay: `${(index % 3) * 80}ms` }}>
-              <div className='product-image'>
-                <img src={product.image} alt={product.title} loading='lazy' />
-                <span className='product-tag'>{product.tag}</span>
-              </div>
+          {featuredProducts.map((product, index) => (
+            <article className='product-card reveal' key={product.id} style={{ transitionDelay: `${(index % 3) * 80}ms` }}>
+              <Link to={productLink(product.id)} className='product-image' tabIndex={-1} aria-hidden='true'>
+                <img src={product.images && product.images[0]} alt='' loading='lazy' />
+                {product.badge ? <span className='product-tag'>{tr(product.badge)}</span> : null}
+              </Link>
               <div className='product-body'>
-                <h3>{product.title}</h3>
-                <p>{product.text}</p>
-                <a href={SITE_INFO.whatsappLink} target='_blank' rel='noreferrer' className='product-link'>
-                  Order now <Icon name='arrow' size={16} strokeWidth={2.2} />
-                </a>
+                <h3><Link to={productLink(product.id)}>{tr(product.name)}</Link></h3>
+                <p>{tr(product.short_description)}</p>
+                <div className='product-meta'>
+                  <ProductPrice product={product} />
+                  {formatPackSize(product) ? <span className='product-size'>{formatPackSize(product)}</span> : null}
+                </div>
+                <Link to={productLink(product.id)} className='product-link'>
+                  View product <Icon name='arrow' size={16} strokeWidth={2.2} />
+                </Link>
               </div>
             </article>
           ))}

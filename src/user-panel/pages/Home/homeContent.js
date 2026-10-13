@@ -1,7 +1,6 @@
 // Text and pictures shown on the home page.
-// Edit this file to change products, dishes or benefits without touching the layout.
-
-const IMAGES = process.env.REACT_APP_PUBLIC_IMAGES_URL;
+// Edit this file to change the highlights or benefits without touching the layout.
+// Products are in src/Constants.js (PRODUCTS), shared with the shop pages.
 
 export const HIGHLIGHTS = [
   { icon: 'truck', title: 'Doorstep delivery', text: 'On orders above 900 g' },
@@ -9,47 +8,6 @@ export const HIGHLIGHTS = [
   { icon: 'jar', title: '6-month shelf life', text: 'Shade-dried mushrooms' },
   { icon: 'sprout', title: 'Hi-tech farm', text: 'Grown in Kozhikode, Kerala' },
 ];
-
-export const PRODUCTS = [
-  {
-    tag: 'Fresh',
-    title: 'White Oyster Mushrooms',
-    text: 'Fresh white oyster mushrooms, delivered straight from our farm to your home.',
-    image: `${IMAGES}/home/sec-2-1.jpg`,
-  },
-  {
-    tag: 'Fresh',
-    title: 'Grey Oyster Mushrooms',
-    text: 'Our grey variety of oyster mushrooms makes your dishes even more flavourful.',
-    image: `${IMAGES}/home/sec-2-2.jpg`,
-  },
-  {
-    tag: 'Dried',
-    title: 'Dried Mushrooms',
-    text: 'Tired of buying every day? Shade-dried mushrooms keep for 6 months with all the goodness of fresh ones.',
-    image: `${IMAGES}/home/sec-2-7.webp`,
-  },
-  {
-    tag: 'Dried',
-    title: 'Mushroom Powder',
-    text: 'Add a pinch to your daily dishes to boost both taste and nutrition.',
-    image: `${IMAGES}/home/sec-2-8.jpg`,
-  },
-  {
-    tag: 'For growers',
-    title: 'Mushroom Spawn',
-    text: 'Planning to cultivate mushrooms? Start with our high-quality spawn.',
-    image: `${IMAGES}/home/sec-2-3.jpg`,
-  },
-  {
-    tag: 'For growers',
-    title: 'Ready-to-pluck Beds',
-    text: 'Grow mushrooms at home with no technical know-how. Just water and harvest.',
-    image: `${IMAGES}/home/sec-2-4.jpg`,
-  },
-];
-
-// Mushroom dishes now come from RECIPES in src/Constants.js
 
 export const BENEFITS = [
   { icon: 'shield', title: 'Boosts Immunity', text: 'Beta-glucans in mushrooms stimulate the immune system and help the body fight infections.' },

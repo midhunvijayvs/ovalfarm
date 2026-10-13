@@ -3,19 +3,15 @@ import { Link } from "react-router-dom";
 import "./Footer.scss";
 import { NAV_LINKS } from "./navLinks";
 import { SITE_INFO } from "../../siteInfo";
+import { useLanguage } from "../../i18n/LanguageContext";
+import { useProducts, productLink } from "../pages/Shop/shopHelpers";
 
 const IMAGES = process.env.REACT_APP_PUBLIC_IMAGES_URL;
 
-const PRODUCT_LINKS = [
-  "White Oyster Mushrooms",
-  "Grey Oyster Mushrooms",
-  "Dried Mushrooms",
-  "Mushroom Powder",
-  "Mushroom Spawn",
-  "Ready-to-grow Beds",
-];
-
 const Footer = () => {
+  const { tr } = useLanguage();
+  const { products } = useProducts();
+
   return (
     <footer className="site-footer">
       <div className="footer-cta">
@@ -58,8 +54,8 @@ const Footer = () => {
         <div className="footer-col">
           <h3>Our Products</h3>
           <ul>
-            {PRODUCT_LINKS.map((name) => (
-              <li key={name}><Link to="/home#products">{name}</Link></li>
+            {products.map((product) => (
+              <li key={product.id}><Link to={productLink(product.id)}>{tr(product.name)}</Link></li>
             ))}
           </ul>
         </div>
