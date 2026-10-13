@@ -17,6 +17,7 @@ import InformationSecurityPolicy from '../pages/InformationSecurityPolicy/Inform
 import NoPage from '../pages/NoPage/NoPage';
 import RecipeList from '../pages/Recipes/RecipeList';
 import RecipeDetails from '../pages/Recipes/RecipeDetails';
+import WhyMushrooms from '../pages/WhyMushrooms/WhyMushrooms';
 
 // Scrolls to the top on every new page, or to a section when the link has a #hash
 const ScrollManager = () => {
@@ -56,6 +57,7 @@ const Layout = () => {
           <Route index element={<Navigate to="/home" />} />
           <Route path="home" element={<Home />} />
           <Route path="contact-us" element={<ContactUs />} />
+          <Route path="why-mushrooms" element={<WhyMushrooms />} />
           <Route path="recipies" element={<Navigate to="/recipies/list" replace />} />
           <Route path="recipies/list" element={<RecipeList />} />
           <Route path="recipies/details/:id" element={<RecipeDetails />} />

@@ -4,7 +4,7 @@
 export const NAV_LINKS = [
   { label: 'Home', to: '/home' },
   { label: 'Products', to: '/home#products' },
-  { label: 'Why Mushrooms', to: '/home#benefits' },
+  { label: 'Why Mushrooms', to: '/why-mushrooms' },
   { label: 'Recipes', to: '/recipies/list', section: '/recipies' },
   { label: 'Contact', to: '/contact-us' },
 ];

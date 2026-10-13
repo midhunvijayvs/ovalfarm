@@ -160,7 +160,7 @@ const Home = () => {
               You no longer need to give up flavour to stay healthy. Just switch
               to mushrooms! They are tasty, filling and packed with nutrition.
             </p>
-            <Link to='/home#benefits' className='text-link'>
+            <Link to='/why-mushrooms' className='text-link'>
               See the benefits <Icon name='arrow' size={18} strokeWidth={2.2} />
             </Link>
           </div>
@@ -206,6 +206,11 @@ const Home = () => {
               <p>{benefit.text}</p>
             </div>
           ))}
+        </div>
+        <div className='benefits-more reveal'>
+          <Link to='/why-mushrooms' className='btn-primary'>
+            Know more <Icon name='arrow' size={18} strokeWidth={2.2} />
+          </Link>
         </div>
       </section>
 

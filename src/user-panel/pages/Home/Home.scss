@@ -56,6 +56,12 @@
       align-items: flex-end;
       justify-content: space-between;
       gap: 24px;
+
+      @include mob {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
     }
 
     @include mob {
@@ -694,6 +700,17 @@
 
     @include mob {
       padding: 56px 0 64px;
+    }
+  }
+
+  .benefits-more {
+    @include container;
+    display: flex;
+    justify-content: center;
+    margin-top: 36px;
+
+    @include mob {
+      margin-top: 24px;
     }
   }
 

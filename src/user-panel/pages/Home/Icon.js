@@ -86,6 +86,33 @@ const PATHS = {
     </>
   ),
   bolt: <path d="M13 3 5 13.5h6L10 21l8-10.5h-6Z" />,
+  flask: (
+    <>
+      <path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3" />
+      <path d="M7.5 15h9" />
+    </>
+  ),
+  check: <path d="m5 12.5 4.5 4.5L19 7.5" />,
+  plus: <path d="M12 5v14M5 12h14" />,
+  box: (
+    <>
+      <path d="M3.5 7.5 12 3l8.5 4.5v9L12 21l-8.5-4.5Z" />
+      <path d="M3.5 7.5 12 12l8.5-4.5M12 12v9" />
+    </>
+  ),
+  users: (
+    <>
+      <circle cx="9" cy="8" r="3.2" />
+      <path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6" />
+      <path d="M16 4.8a3.2 3.2 0 0 1 0 6.4M18 14.3c1.8.8 3 2.8 3 5.7" />
+    </>
+  ),
+  sunrise: (
+    <>
+      <path d="M4 18h16M7 18a5 5 0 0 1 10 0" />
+      <path d="M12 4v4M5.6 9.6l1.6 1.6M18.4 9.6l-1.6 1.6M3 14h2M19 14h2M4 21h16" />
+    </>
+  ),
   arrow: <path d="M5 12h14M13 6l6 6-6 6" />,
   arrowLeft: <path d="M19 12H5M11 6l-6 6 6 6" />,
   mushroom: (
