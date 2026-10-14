@@ -85,27 +85,27 @@ export const PROCESS = [
   { icon: 'truck', title: 'Delivered', text: 'Fresh within 30 km, packed products all over India.' },
 ];
 
+// Team photos are hidden for now and a formal avatar is shown instead.
+// Set this to true to show the photos again (the files are still in public/images/about/).
+export const SHOW_TEAM_PHOTOS = false;
+
 export const TEAM = [
   {
     name: 'Midhun Vijay',
-    role: 'Founder',
+    role: 'Founder & CEO',
     photo: `${IMAGES}/about/midhun-vijay.jpg`,
-    details: [
-      'BTech, Government Engineering College Kozhikode',
-      '4 years as a software engineer',
-      '12 years in entrepreneurship',
-    ],
+    description: 'The mind behind Oval Farms. Shaped the idea of health-first, easy-to-cook food and leads the company’s vision, strategy, marketing and overall growth.',
   },
   {
     name: 'Abin Vijay',
     role: 'Execution Manager & Co-founder',
     photo: `${IMAGES}/about/abin-vijay.jpg`,
-    details: ['BCom graduate'],
+    description: 'Runs the day-to-day operations, from production on the farm to sales, making sure every order is grown, packed and delivered right.',
   },
   {
     name: 'Rejilesh V. M',
-    role: 'Investing Partner',
+    role: 'Director',
     photo: `${IMAGES}/about/rejilesh-vm.jpg`,
-    details: ['Electrical Engineer, GCC'],
+    description: 'A partner and director at Oval Farms, guides the company’s direction and helps steer key business decisions as we grow.',
   },
 ];

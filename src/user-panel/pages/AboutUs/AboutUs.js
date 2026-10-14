@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import './AboutUs.scss'
 import Icon from '../Home/Icon'
 import {
-  ABOUT_HERO, QUICK_FACTS, STORY, VALUES, FLAGSHIP, MUSHROOM_STORY, PROCESS, TEAM,
+  ABOUT_HERO, QUICK_FACTS, STORY, VALUES, FLAGSHIP, MUSHROOM_STORY, PROCESS, TEAM, SHOW_TEAM_PHOTOS,
 } from './aboutContent'
 import { productLink, SHOP_LIST_LINK } from '../Shop/shopHelpers'
 
@@ -29,6 +29,18 @@ const useRevealOnScroll = () => {
     return () => observer.disconnect()
   }, [])
 }
+
+// A plain, formal person outline (suit and tie), shown while team photos are hidden
+const FormalAvatar = () => (
+  <span className='team-avatar' aria-hidden='true'>
+    <svg viewBox='0 0 160 160'>
+      <circle cx='80' cy='62' r='28' fill='#12650a' />
+      <path d='M24 160c2-34 26-54 56-54s54 20 56 54Z' fill='#0b2e0d' />
+      <path d='M66 106l14 22 14-22Z' fill='#ffffff' />
+      <path d='M80 112l-5 8 5 32 5-32Z' fill='#1d9b09' />
+    </svg>
+  </span>
+)
 
 // /about-us
 const AboutUs = () => {
@@ -218,13 +230,15 @@ const AboutUs = () => {
           {TEAM.map((member, index) => (
             <article className='team-card reveal' key={member.name} style={{ transitionDelay: `${index * 100}ms` }}>
               <div className='team-photo'>
-                <img src={member.photo} alt={member.name} loading='lazy' />
+                {SHOW_TEAM_PHOTOS && member.photo ? (
+                  <img src={member.photo} alt={member.name} loading='lazy' />
+                ) : (
+                  <FormalAvatar />
+                )}
               </div>
               <h3>{member.name}</h3>
               <span className='team-role'>{member.role}</span>
-              <ul>
-                {member.details.map((detail) => <li key={detail}>{detail}</li>)}
-              </ul>
+              <p className='team-bio'>{member.description}</p>
             </article>
           ))}
         </div>
