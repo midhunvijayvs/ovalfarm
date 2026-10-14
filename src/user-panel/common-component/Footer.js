@@ -81,6 +81,10 @@ const Footer = () => {
 
       <div className="footer-bottom">
         <span>© {new Date().getFullYear()} {SITE_INFO.fullName}. All rights reserved.</span>
+        <span className="footer-legal">
+          <Link to="/privacy-policy">Privacy Policy</Link>
+          <Link to="/terms-of-service">Terms of Service</Link>
+        </span>
         <span>Grown with care in Kozhikode, Kerala 🌱</span>
       </div>
     </footer>

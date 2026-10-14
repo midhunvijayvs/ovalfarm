@@ -6,8 +6,9 @@ import { useLanguage } from '../../../i18n/LanguageContext'
 import ProductCard from './ProductCard'
 import ProductPrice from './ProductPrice'
 import {
-  useProduct, useProducts, useProductCategories, comingSoonLink, formatPackSize, splitLines, SHOP_LIST_LINK,
+  useProduct, useProducts, useProductCategories, formatPackSize, splitLines, SHOP_LIST_LINK,
 } from './shopHelpers'
+import BuyButtons from '../../../customer/BuyButtons'
 import { SITE_INFO } from '../../../siteInfo'
 
 // /shop/details/:id
@@ -133,12 +134,7 @@ const ProductDetails = () => {
               <span aria-live='polite'>{quantity}</span>
               <button type='button' onClick={() => setQuantity(Math.min(99, quantity + 1))} aria-label='Increase quantity'>+</button>
             </div>
-            <Link to={comingSoonLink(product, 'cart')} className={`shop-btn ghost ${outOfStock ? 'disabled' : ''}`}>
-              <Icon name='cart' size={18} /> Add to cart
-            </Link>
-            <Link to={comingSoonLink(product, 'buy')} className={`shop-btn solid ${outOfStock ? 'disabled' : ''}`}>
-              Buy now
-            </Link>
+            <BuyButtons product={product} quantity={quantity} disabled={outOfStock} />
           </div>
 
           <a href={whatsappLink} target='_blank' rel='noreferrer' className='product-whatsapp'>

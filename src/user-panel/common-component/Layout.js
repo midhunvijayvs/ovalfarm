@@ -11,7 +11,6 @@ import ResumeList from '../pages/ResumeList/ResumeList';
 import ContactUs from '../pages/ContactUs/ContactUs';
 import ToolsHome from '../pages/ToolsHome/ToolsHome';
 import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy';
-import CookiePolicy from '../pages/CookiePolicy/CookiePolicy';
 import TermsAndConditions from '../pages/TermsAndConditions/TermsAndConditions';
 import InformationSecurityPolicy from '../pages/InformationSecurityPolicy/InformationSecurityPolicy';
 import NoPage from '../pages/NoPage/NoPage';
@@ -22,6 +21,10 @@ import ShopList from '../pages/Shop/ShopList';
 import ProductDetails from '../pages/Shop/ProductDetails';
 import ComingSoon from '../pages/Shop/ComingSoon';
 import AboutUs from '../pages/AboutUs/AboutUs';
+import CustomerLogin from '../../customer/pages/Login';
+import Cart from '../../customer/pages/Cart';
+import Checkout from '../../customer/pages/Checkout';
+import MyOrders from '../../customer/pages/MyOrders';
 
 // Scrolls to the top on every new page, or to a section when the link has a #hash
 const ScrollManager = () => {
@@ -67,18 +70,25 @@ const Layout = () => {
           <Route path="shop/list" element={<ShopList />} />
           <Route path="shop/details/:id" element={<ProductDetails />} />
           <Route path="shop/coming-soon" element={<ComingSoon />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="account" element={<Navigate to="/account/orders" replace />} />
+          <Route path="account/login" element={<CustomerLogin />} />
+          <Route path="account/orders" element={<MyOrders />} />
           <Route path="recipies" element={<Navigate to="/recipies/list" replace />} />
           <Route path="recipies/list" element={<RecipeList />} />
           <Route path="recipies/details/:id" element={<RecipeDetails />} />
           <Route path="recipes/*" element={<RecipesSpellingRedirect />} />
 
+          <Route path="privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="terms-of-service" element={<TermsAndConditions />} />
+          <Route path="terms-and-conditions" element={<Navigate to="/terms-of-service" replace />} />
+          <Route path="cookie-policy" element={<Navigate to="/privacy-policy#cookies" replace />} />
+
           {/* Pages left over from the earlier template, not linked from the menu */}
           <Route path="tools-home" element={<ToolsHome />} />
           <Route path="resume-list" element={<ResumeList />} />
           <Route path="resume-preview/:id" element={<ResumePreview />} />
-          <Route path="privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="terms-and-conditions" element={<TermsAndConditions />} />
-          <Route path="cookie-policy" element={<CookiePolicy />} />
           <Route path="information-security-policy" element={<InformationSecurityPolicy />} />
 
           <Route path="*" element={<NoPage />} />

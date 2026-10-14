@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom'
 import Icon from '../Home/Icon'
 import { useLanguage } from '../../../i18n/LanguageContext'
 import ProductPrice from './ProductPrice'
-import { productLink, comingSoonLink, formatPackSize } from './shopHelpers'
+import { productLink, formatPackSize } from './shopHelpers'
+import BuyButtons from '../../../customer/BuyButtons'
 
 // One product tile, used on the shop list, the product page and the home page.
 // "compact" hides the Add to cart / Buy now buttons (used on the home page).
@@ -37,10 +38,7 @@ const ProductCard = ({ product, compact = false }) => {
 
         {!compact ? (
           <div className='product-tile-actions'>
-            <Link to={comingSoonLink(product, 'cart')} className='shop-btn ghost'>
-              <Icon name='cart' size={18} /> Add to cart
-            </Link>
-            <Link to={comingSoonLink(product, 'buy')} className='shop-btn solid'>Buy now</Link>
+            <BuyButtons product={product} />
           </div>
         ) : null}
       </div>

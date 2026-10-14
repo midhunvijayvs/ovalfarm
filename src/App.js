@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 
 import { UserProvider } from "./authentication/pages/UserContext"
 import { LanguageProvider } from "./i18n/LanguageContext"
+import { CustomerProvider } from "./customer/CustomerContext"
+import { CartProvider } from "./customer/CartContext"
 
 
 
@@ -41,6 +43,8 @@ function App() {
       <Router>
         <LanguageProvider>
         <UserProvider>
+        <CustomerProvider>
+        <CartProvider>
           <Routes>
 
             <Route path="/*" element={<UserLayout />} />
@@ -81,6 +85,8 @@ function App() {
             <Route path="/landing-page-privacy-policy" element={<LandingPrivacyPolicy />} />
 
           </Routes>
+        </CartProvider>
+        </CustomerProvider>
         </UserProvider>
         </LanguageProvider>
       </Router>

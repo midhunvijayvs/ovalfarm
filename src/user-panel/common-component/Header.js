@@ -2,6 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import './Header.scss'
 import { NAV_LINKS, ORDER_LINK } from './navLinks'
+import Icon from '../pages/Home/Icon'
+import { shopIsOnline } from '../../customer/firebase'
+import { useCart } from '../../customer/CartContext'
+import { useCustomer } from '../../customer/CustomerContext'
+import { CART_LINK, ORDERS_LINK } from '../../customer/shop'
+import '../../customer/Customer.scss'
 
 const IMAGES = process.env.REACT_APP_PUBLIC_IMAGES_URL
 
@@ -9,6 +15,8 @@ const Header = () => {
   const location = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setMenuOpen] = useState(false)
+  const { count } = useCart()
+  const { user } = useCustomer()
 
   // Add a shadow once the page is scrolled
   useEffect(() => {
@@ -64,6 +72,17 @@ const Header = () => {
           </nav>
 
           <div className='header-actions'>
+            {shopIsOnline() ? (
+              <>
+                <Link to={ORDERS_LINK} className='header-icon' aria-label={user ? 'My orders' : 'Sign in'} title={user ? 'My orders' : 'Sign in'}>
+                  <Icon name='user' size={22} />
+                </Link>
+                <Link to={CART_LINK} className='header-icon' aria-label={`Cart, ${count} items`} title='Cart'>
+                  <Icon name='cart' size={22} />
+                  {count ? <span className='header-count'>{count > 99 ? '99+' : count}</span> : null}
+                </Link>
+              </>
+            ) : null}
             <Link to={ORDER_LINK} className='order-btn'>
               Order Now
               <svg width='16' height='16' viewBox='0 0 24 24' fill='none' aria-hidden='true'>
