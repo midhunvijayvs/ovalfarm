@@ -156,9 +156,9 @@ return (
                   </td>
                   <td data-th="More">
                   <div className='action-btn-box'>
-                    <button onClick={()=>viewDetails(item.id)}><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/admin-panel/table-view-icon.svg`} /></button>
-                    <button onClick={() => { editItem(item.id) }}><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/admin-panel/table-edit-icon.svg`} /></button>
-                    <button onClick={() => { setIdSelected(item.id); setIsDeleteConfModalOpen(true) }}><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/admin-panel/table-delete-icon.svg`} /></button>
+                    <button onClick={()=>viewDetails(item.id)}><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/resume-list/table-view-icon.svg`} /></button>
+                    <button onClick={() => { editItem(item.id) }}><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/resume-list/table-edit-icon.svg`} /></button>
+                    <button onClick={() => { setIdSelected(item.id); setIsDeleteConfModalOpen(true) }}><img src={`${process.env.REACT_APP_PUBLIC_IMAGES_URL}/resume-list/table-delete-icon.svg`} /></button>
                   </div>
                   </td>
 

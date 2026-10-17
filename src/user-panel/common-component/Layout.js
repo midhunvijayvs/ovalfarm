@@ -3,7 +3,6 @@ import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Header from './Header';
 import Footer from './Footer'
 import './Layout.css'
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 
 import Home from '../pages/Home/Home';
 import ResumePreview from '../pages/ResumePreview/ResumePreview';
@@ -12,7 +11,6 @@ import ContactUs from '../pages/ContactUs/ContactUs';
 import ToolsHome from '../pages/ToolsHome/ToolsHome';
 import PrivacyPolicy from '../pages/PrivacyPolicy/PrivacyPolicy';
 import TermsAndConditions from '../pages/TermsAndConditions/TermsAndConditions';
-import InformationSecurityPolicy from '../pages/InformationSecurityPolicy/InformationSecurityPolicy';
 import NoPage from '../pages/NoPage/NoPage';
 import RecipeList from '../pages/Recipes/RecipeList';
 import RecipeDetails from '../pages/Recipes/RecipeDetails';
@@ -85,11 +83,10 @@ const Layout = () => {
           <Route path="terms-and-conditions" element={<Navigate to="/terms-of-service" replace />} />
           <Route path="cookie-policy" element={<Navigate to="/privacy-policy#cookies" replace />} />
 
-          {/* Pages left over from the earlier template, not linked from the menu */}
+          {/* Resume builder (Midhun's earlier project, to be moved to its own repo) */}
           <Route path="tools-home" element={<ToolsHome />} />
           <Route path="resume-list" element={<ResumeList />} />
           <Route path="resume-preview/:id" element={<ResumePreview />} />
-          <Route path="information-security-policy" element={<InformationSecurityPolicy />} />
 
           <Route path="*" element={<NoPage />} />
         </Routes>
