@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 // The shopping cart, kept in this browser so it survives a page reload.
-// Each line is { id, qty } where id is the product id from Constants.js.
+// Each line is { id, qty } where id is the product id from the shared catalog (src/services/productService.js).
 // Use it in any page: const { lines, count, add, setQty, remove, clear } = useCart()
 const STORAGE_KEY = 'ovalfarm_cart'
 const CartContext = createContext(null)

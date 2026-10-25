@@ -468,6 +468,10 @@
     color: $white;
     font-size: 12px;
     font-weight: 600;
+
+    &.low {
+      background: $orange;
+    }
   }
 
   &.sold-out .product-tile-image img {
@@ -787,7 +791,8 @@
       box-shadow: 0 0 0 4px rgba($green, 0.15);
     }
 
-    &.out {
+    &.out,
+    &.low {
       color: $orange;
     }
   }

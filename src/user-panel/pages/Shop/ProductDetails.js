@@ -49,6 +49,7 @@ const ProductDetails = () => {
   const packSize = formatPackSize(product)
   const category = categories.find((item) => item.id === product.category)
   const outOfStock = product.in_stock === false
+  const lowStock = !outOfStock && product.stock_status === 'low'
   const whatsappText = `Hi Oval Farms, I would like to order ${tr(product.name)}${packSize ? ` (${packSize})` : ''}, quantity ${quantity}.`
   const whatsappLink = `https://wa.me/91${SITE_INFO.phone}?text=${encodeURIComponent(whatsappText)}`
 
@@ -113,8 +114,8 @@ const ProductDetails = () => {
 
           <div className='product-price-row'>
             <ProductPrice product={product} large />
-            <span className={`product-stock ${outOfStock ? 'out' : ''}`}>
-              {outOfStock ? 'Out of stock' : 'In stock'}
+            <span className={`product-stock ${outOfStock ? 'out' : lowStock ? 'low' : ''}`}>
+              {outOfStock ? 'Out of stock' : lowStock ? 'Only a few left' : 'In stock'}
             </span>
           </div>
 
