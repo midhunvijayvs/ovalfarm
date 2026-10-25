@@ -1,20 +1,18 @@
 {
   "files": {
-    "main.css": "/static/css/main.22ab03b6.css",
-    "main.js": "/static/js/main.cf006fc1.js",
+    "main.css": "/static/css/main.d797ade8.css",
+    "main.js": "/static/js/main.085910da.js",
     "static/js/453.a2a63e3f.chunk.js": "/static/js/453.a2a63e3f.chunk.js",
     "static/media/WorkSans-VariableFont_wght.ttf": "/static/media/WorkSans-VariableFont_wght.a0297787a1a192213b53.ttf",
     "static/media/WorkSans-Italic-VariableFont_wght.ttf": "/static/media/WorkSans-Italic-VariableFont_wght.909e4faac8822880e462.ttf",
     "index.html": "/index.html",
     "static/media/black-right-arrow.svg": "/static/media/black-right-arrow.70f5efeed8e6889ab845.svg",
-    "static/media/prev-arrow-black-web.svg": "/static/media/prev-arrow-black-web.4d47a73ef066c73d889f.svg",
-    "static/media/next-arrow-black-web.svg": "/static/media/next-arrow-black-web.20f9c194ea3de45045fd.svg",
-    "main.22ab03b6.css.map": "/static/css/main.22ab03b6.css.map",
-    "main.cf006fc1.js.map": "/static/js/main.cf006fc1.js.map",
+    "main.d797ade8.css.map": "/static/css/main.d797ade8.css.map",
+    "main.085910da.js.map": "/static/js/main.085910da.js.map",
     "453.a2a63e3f.chunk.js.map": "/static/js/453.a2a63e3f.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.22ab03b6.css",
-    "static/js/main.cf006fc1.js"
+    "static/css/main.d797ade8.css",
+    "static/js/main.085910da.js"
   ]
 }
