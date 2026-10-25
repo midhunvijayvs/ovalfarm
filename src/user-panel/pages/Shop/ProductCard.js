@@ -19,7 +19,8 @@ const ProductCard = ({ product, compact = false }) => {
       <Link to={link} className='product-tile-image' tabIndex={-1} aria-hidden='true'>
         <img src={image} alt='' loading='lazy' />
         {product.badge ? <span className='product-tile-badge'>{tr(product.badge)}</span> : null}
-        {product.in_stock === false ? <span className='product-tile-stock'>Out of stock</span> : null}
+        {product.in_stock === false ? <span className='product-tile-stock'>Out of stock</span>
+          : product.stock_status === 'low' ? <span className='product-tile-stock low'>Only a few left</span> : null}
       </Link>
 
       <div className='product-tile-body'>

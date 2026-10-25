@@ -70,6 +70,7 @@ const Checkout = () => {
     if (digits.length !== 10) return setError('Please enter a 10-digit mobile number so we can call you about the delivery.')
     if (!address.line1.trim() || !address.city.trim()) return setError('Please enter your house name or number, street and town.')
     if (!/^\d{6}$/.test(address.pincode.trim())) return setError('Please enter the 6-digit PIN code.')
+    if (!profile) return setError('Sorry, we could not load your account. Please refresh the page and try again.')
 
     const cleanAddress = Object.fromEntries(Object.entries(address).map(([key, value]) => [key, String(value || '').trim().slice(0, 200)]))
     const customer = { name: name.trim().slice(0, 100), phone: '+91 ' + digits }
@@ -79,6 +80,8 @@ const Checkout = () => {
     try {
       const ref = await addDoc(collection(db, 'orders'), {
         customerUid: user.uid,
+        customerId: profile.id,
+        channel: 'online',
         customer,
         address: cleanAddress,
         items: items.map(({ product, qty }) => ({
@@ -95,7 +98,7 @@ const Checkout = () => {
         note: note.trim().slice(0, 500),
         payment: 'cod',
         status: 'placed',
-        source: 'website',
+        source: 'Website',
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       })

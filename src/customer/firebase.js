@@ -27,8 +27,8 @@ export const ORDER_STATUS = {
   cancelled: 'Cancelled',
 }
 
-// Short order number shown to customers and staff, e.g. W-7Q2KX9
-export const orderNumber = (id) => 'W-' + String(id).slice(0, 6).toUpperCase()
+// Short order number shown to customers and staff, the same as in the ERP, e.g. OF-7Q2KX9
+export const orderNumber = (id) => 'OF-' + String(id).slice(0, 6).toUpperCase()
 
 // Firebase error codes in plain words
 export const authMessage = (error) => {

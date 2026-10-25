@@ -1,6 +1,6 @@
 // Text and pictures shown on the home page.
 // Edit this file to change the highlights or benefits without touching the layout.
-// Products are in src/Constants.js (PRODUCTS), shared with the shop pages.
+// Products come from the shared database (the ERP's Products & Materials, see src/services/productService.js).
 
 export const HIGHLIGHTS = [
   { icon: 'truck', title: 'Doorstep delivery', text: 'On orders above 900 g' },

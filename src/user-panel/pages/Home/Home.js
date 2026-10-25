@@ -124,7 +124,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ---------- Products (from the product data in Constants.js) ---------- */}
+      {/* ---------- Products (from the shared catalog the ERP keeps) ---------- */}
       <section className='products' id='products'>
         <div className='section-head row reveal'>
           <div>
