@@ -762,6 +762,43 @@
     color: $earth;
   }
 
+  .product-packs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .product-pack {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 12px;
+    border: 1.5px solid $sand;
+    background: $white;
+    color: $ink;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+
+    small {
+      font-size: 11px;
+      font-weight: 500;
+      color: $orange;
+    }
+
+    &:hover {
+      border-color: $green;
+    }
+
+    &.on {
+      border-color: $green;
+      background: $green-50;
+      color: $green-700;
+    }
+  }
+
   .product-price-row {
     display: flex;
     flex-wrap: wrap;

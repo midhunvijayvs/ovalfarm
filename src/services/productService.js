@@ -9,7 +9,9 @@ import { db } from '../customer/firebase'
 //
 // Product fields: id, sku, slug, name, category, category_name, short_description, description,
 // images, price, mrp, currency, net_quantity, unit, is_featured, badge, highlights,
-// how_to_use, storage, shelf_life, display_order, stock_status, in_stock.
+// how_to_use, storage, shelf_life, display_order, stock_status, in_stock,
+// product_id, pack_id, pack_name, pack_size. A product sold in pack sizes (e.g. Loose and Bag 25 kg) has one
+// entry per pack; they share product_id, and pack_size is how much of the product's stock one uses.
 
 let cache = null
 

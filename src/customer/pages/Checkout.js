@@ -85,7 +85,10 @@ const Checkout = () => {
         customer,
         address: cleanAddress,
         items: items.map(({ product, qty }) => ({
-          productId: String(product.id),
+          // A pack size (e.g. a 25 kg bag) is ordered against its product, so the ERP takes size × qty off stock
+          productId: String(product.product_id || product.id),
+          packId: product.pack_id || null,
+          size: Number(product.pack_size) || 1,
           name: tr(product.name) + (formatPackSize(product) ? ` (${formatPackSize(product)})` : ''),
           qty,
           unit: 'pack',
