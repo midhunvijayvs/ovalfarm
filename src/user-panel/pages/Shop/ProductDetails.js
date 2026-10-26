@@ -6,7 +6,7 @@ import { useLanguage } from '../../../i18n/LanguageContext'
 import ProductCard from './ProductCard'
 import ProductPrice from './ProductPrice'
 import {
-  useProduct, useProducts, useProductCategories, formatPackSize, splitLines, SHOP_LIST_LINK,
+  useProduct, useProducts, useProductCategories, formatPackSize, splitLines, productLink, SHOP_LIST_LINK,
 } from './shopHelpers'
 import BuyButtons from '../../../customer/BuyButtons'
 import { SITE_INFO } from '../../../siteInfo'
@@ -53,10 +53,14 @@ const ProductDetails = () => {
   const whatsappText = `Hi Oval Farms, I would like to order ${tr(product.name)}${packSize ? ` (${packSize})` : ''}, quantity ${quantity}.`
   const whatsappLink = `https://wa.me/91${SITE_INFO.phone}?text=${encodeURIComponent(whatsappText)}`
 
-  // Same category first, then the rest
+  // Other pack sizes of the same product, e.g. Loose and Bag (25 kg)
+  const packs = product.pack_id ? products.filter((item) => item.product_id === product.product_id) : []
+
+  // Same category first, then the rest (other pack sizes are shown above instead)
+  const others = products.filter((item) => item.id !== product.id && !packs.includes(item))
   const related = [
-    ...products.filter((item) => item.id !== product.id && item.category === product.category),
-    ...products.filter((item) => item.id !== product.id && item.category !== product.category),
+    ...others.filter((item) => item.category === product.category),
+    ...others.filter((item) => item.category !== product.category),
   ].slice(0, 3)
 
   const tabs = [
@@ -111,6 +115,17 @@ const ProductDetails = () => {
           ) : null}
           <h1>{tr(product.name)}</h1>
           {packSize ? <span className='product-size'>Net quantity: {packSize}</span> : null}
+
+          {packs.length > 1 ? (
+            <div className='product-packs' aria-label='Pack size'>
+              {packs.map((item) => (
+                <Link key={item.id} to={productLink(item.id)} className={`product-pack ${item.id === product.id ? 'on' : ''}`} aria-current={item.id === product.id ? 'true' : undefined}>
+                  {[item.pack_name, formatPackSize(item)].filter(Boolean).join(' · ') || tr(item.name)}
+                  {item.in_stock === false ? <small>Out of stock</small> : null}
+                </Link>
+              ))}
+            </div>
+          ) : null}
 
           <div className='product-price-row'>
             <ProductPrice product={product} large />
