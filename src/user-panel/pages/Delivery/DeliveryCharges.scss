@@ -1,0 +1,159 @@
+@import '../../../styles/theme';
+
+// /delivery-charges: the rings around the farm and the rate for each range
+.delivery-page {
+  background: $cream;
+  color: $ink;
+  font-family: $font-body;
+  padding: 48px 0 80px;
+
+  @include mob {
+    padding: 28px 0 56px;
+  }
+
+  h1 {
+    font-family: $font-display;
+    color: $green-900;
+    font-size: 38px;
+    margin: 0 0 10px;
+
+    @include mob {
+      font-size: 28px;
+    }
+  }
+
+  h2 {
+    font-family: $font-display;
+    color: $green-900;
+    font-size: 24px;
+    margin: 0 0 12px;
+  }
+}
+
+.delivery-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.delivery-lead {
+  font-size: 17px;
+  color: $muted;
+  margin: 0 0 28px;
+  max-width: 62ch;
+}
+
+.delivery-figure {
+  text-align: center;
+
+  svg {
+    width: min(420px, 100%);
+    height: auto;
+  }
+
+  .ring-label {
+    font-family: $font-body;
+    font-size: 13px;
+    font-weight: 600;
+    fill: $green-900;
+  }
+
+  .farm-label {
+    font-family: $font-body;
+    font-size: 13px;
+    font-weight: 700;
+    fill: $white;
+  }
+
+  .figure-note {
+    font-size: 13px;
+    color: $muted;
+    margin: 6px 0 28px;
+  }
+}
+
+.delivery-table {
+  border: 1px solid $sand;
+  border-radius: $radius;
+  overflow: hidden;
+  background: $white;
+  box-shadow: $shadow-sm;
+
+  .row {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1.2fr;
+    gap: 12px;
+    padding: 14px 18px;
+    border-top: 1px solid $sand;
+    font-size: 15px;
+
+    &:first-child {
+      border-top: 0;
+    }
+
+    &.head {
+      background: $green-50;
+      font-weight: 700;
+      color: $green-900;
+    }
+
+    &.paused {
+      color: $orange;
+    }
+
+    small {
+      color: $muted;
+      font-weight: 400;
+    }
+  }
+
+  @include mob {
+    .row {
+      grid-template-columns: 1fr;
+      gap: 4px;
+
+      &.head {
+        display: none;
+      }
+
+      span + span::before {
+        content: attr(data-head) ': ';
+        color: $muted;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.delivery-steps {
+  margin-top: 36px;
+
+  ol {
+    margin: 0 0 16px;
+    padding-left: 22px;
+    color: $muted;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+
+  strong {
+    color: $ink;
+  }
+
+  .delivery-fine {
+    font-size: 14px;
+    color: $muted;
+
+    a {
+      color: $green-700;
+      font-weight: 600;
+    }
+  }
+
+  .button-row {
+    margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}

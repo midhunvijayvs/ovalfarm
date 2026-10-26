@@ -23,6 +23,8 @@ import CustomerLogin from '../../customer/pages/Login';
 import Cart from '../../customer/pages/Cart';
 import Checkout from '../../customer/pages/Checkout';
 import MyOrders from '../../customer/pages/MyOrders';
+import Address from '../../customer/pages/Address';
+import DeliveryCharges from '../pages/Delivery/DeliveryCharges';
 
 // Scrolls to the top on every new page, or to a section when the link has a #hash
 const ScrollManager = () => {
@@ -73,6 +75,8 @@ const Layout = () => {
           <Route path="account" element={<Navigate to="/account/orders" replace />} />
           <Route path="account/login" element={<CustomerLogin />} />
           <Route path="account/orders" element={<MyOrders />} />
+          <Route path="account/address" element={<Address />} />
+          <Route path="delivery-charges" element={<DeliveryCharges />} />
           <Route path="recipies" element={<Navigate to="/recipies/list" replace />} />
           <Route path="recipies/list" element={<RecipeList />} />
           <Route path="recipies/details/:id" element={<RecipeDetails />} />
