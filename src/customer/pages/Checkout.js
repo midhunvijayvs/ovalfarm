@@ -7,25 +7,25 @@ import { useProducts, formatPrice, formatPackSize, SHOP_LIST_LINK } from '../../
 import { db, orderNumber } from '../firebase'
 import { useCustomer } from '../CustomerContext'
 import { useCart } from '../CartContext'
-import { cartItems, CART_LINK, CHECKOUT_LINK, LOGIN_LINK, ORDERS_LINK } from '../shop'
-import { DELIVERY_CHARGE } from '../firebaseConfig'
+import { cartItems, CART_LINK, CHECKOUT_LINK, LOGIN_LINK, ORDERS_LINK, ADDRESS_LINK, DELIVERY_INFO_LINK } from '../shop'
+import { addressOf, addressText, hasAddress, orderAddress } from '../address'
+import { useDeliveryZones, deliveryQuote, itemWeight } from '../deliveryService'
 import '../Customer.scss'
 
-const EMPTY_ADDRESS = { line1: '', line2: '', landmark: '', city: '', pincode: '' }
-
-// /checkout: delivery details and place the order (pay on delivery)
+// /checkout: check the delivery address, see the delivery charge and place the order (pay on delivery)
 const Checkout = () => {
   const navigate = useNavigate()
   const { tr } = useLanguage()
   const { products, isLoading: productsLoading } = useProducts()
   const { user, profile, isLoading, saveProfile } = useCustomer()
+  const { zones, isLoading: zonesLoading } = useDeliveryZones()
   const { lines, clear } = useCart()
   const items = cartItems(lines, products)
   const subtotal = items.reduce((total, item) => total + item.amount, 0)
+  const weight = items.reduce((total, { product, qty }) => total + itemWeight(product, qty), 0)
 
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [address, setAddress] = useState(EMPTY_ADDRESS)
   const [note, setNote] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -36,8 +36,6 @@ const Checkout = () => {
     if (!profile && !user) return
     setName((current) => current || (profile && profile.name) || (user && user.displayName) || '')
     setPhone((current) => current || ((profile && profile.phone) || (user && user.phoneNumber) || '').replace(/^\+91/, '').trim())
-    const saved = profile && profile.addresses && profile.addresses[0]
-    if (saved) setAddress((current) => (current.line1 ? current : { ...EMPTY_ADDRESS, ...saved }))
   }, [profile, user])
 
   if (placed) {
@@ -60,7 +58,11 @@ const Checkout = () => {
   if (!user) return <Navigate to={`${LOGIN_LINK}?next=${CHECKOUT_LINK}`} replace />
   if (!items.length) return <Navigate to={CART_LINK} replace />
 
-  const setField = (key) => (event) => setAddress({ ...address, [key]: event.target.value })
+  const address = addressOf(profile)
+  const saved = hasAddress(profile)
+  const quote = deliveryQuote(zones, address.pincode, weight, subtotal)
+  const charge = quote.charge || 0
+  const total = subtotal + charge
 
   const placeOrder = async (event) => {
     event.preventDefault()
@@ -68,11 +70,10 @@ const Checkout = () => {
     const digits = phone.replace(/\D/g, '').slice(-10)
     if (!name.trim()) return setError('Please enter your name.')
     if (digits.length !== 10) return setError('Please enter a 10-digit mobile number so we can call you about the delivery.')
-    if (!address.line1.trim() || !address.city.trim()) return setError('Please enter your house name or number, street and town.')
-    if (!/^\d{6}$/.test(address.pincode.trim())) return setError('Please enter the 6-digit PIN code.')
+    if (!saved) return setError('Please add your delivery address first.')
+    if (quote.paused) return setError(quote.note)
     if (!profile) return setError('Sorry, we could not load your account. Please refresh the page and try again.')
 
-    const cleanAddress = Object.fromEntries(Object.entries(address).map(([key, value]) => [key, String(value || '').trim().slice(0, 200)]))
     const customer = { name: name.trim().slice(0, 100), phone: '+91 ' + digits }
     if (user.email) customer.email = user.email
 
@@ -83,7 +84,7 @@ const Checkout = () => {
         customerId: profile.id,
         channel: 'online',
         customer,
-        address: cleanAddress,
+        address: orderAddress(address),
         items: items.map(({ product, qty }) => ({
           // A pack size (e.g. a 25 kg bag) is ordered against its product, so the ERP takes size × qty off stock
           productId: String(product.product_id || product.id),
@@ -94,10 +95,10 @@ const Checkout = () => {
           unit: 'pack',
           price: Number(product.price),
         })),
-        itemCount: items.reduce((total, item) => total + item.qty, 0),
+        itemCount: items.reduce((count, item) => count + item.qty, 0),
         subtotal,
-        deliveryCharge: DELIVERY_CHARGE,
-        total: subtotal + DELIVERY_CHARGE,
+        deliveryCharge: charge,
+        total,
         note: note.trim().slice(0, 500),
         payment: 'cod',
         status: 'placed',
@@ -105,8 +106,8 @@ const Checkout = () => {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       })
-      // Remember the details for next time (not needed for the order itself)
-      saveProfile({ name: customer.name, phone: customer.phone, addresses: [cleanAddress] }).catch(() => {})
+      // Remember the name and number for next time (not needed for the order itself)
+      saveProfile({ name: customer.name, phone: customer.phone }).catch(() => {})
       // Show the thank-you screen before emptying the cart, or the empty cart would send them to /cart
       setPlaced(ref.id)
       clear()
@@ -117,6 +118,8 @@ const Checkout = () => {
     }
     setBusy(false)
   }
+
+  const editAddress = `${ADDRESS_LINK}?next=${CHECKOUT_LINK}`
 
   return (
     <div className='customer-page'>
@@ -131,11 +134,29 @@ const Checkout = () => {
                 Mobile number
                 <div className='phone-field'><span>+91</span><input type='tel' inputMode='numeric' autoComplete='tel-national' value={phone} onChange={(e) => setPhone(e.target.value)} /></div>
               </label>
-              <label className='wide'>House name / number and street<input type='text' autoComplete='address-line1' value={address.line1} onChange={setField('line1')} /></label>
-              <label className='wide'>Area or locality (optional)<input type='text' autoComplete='address-line2' value={address.line2} onChange={setField('line2')} /></label>
-              <label>Landmark (optional)<input type='text' value={address.landmark} onChange={setField('landmark')} /></label>
-              <label>Town / city<input type='text' autoComplete='address-level2' value={address.city} onChange={setField('city')} /></label>
-              <label>PIN code<input type='text' inputMode='numeric' autoComplete='postal-code' maxLength={6} value={address.pincode} onChange={setField('pincode')} /></label>
+            </div>
+
+            <h3 className='sub-head'>Delivery address</h3>
+            {saved ? (
+              <div className='address-card'>
+                <span className='address-icon'><Icon name='pin' size={20} /></span>
+                <div>
+                  <p className='address-text'>{addressText(address)}</p>
+                  {address.mapUrl ? <a className='map-link' href={address.mapUrl} target='_blank' rel='noreferrer'>Open in Google Maps</a> : null}
+                  <Link to={editAddress} className='shop-btn ghost small'>Edit address</Link>
+                </div>
+              </div>
+            ) : (
+              <div className='address-card empty'>
+                <span className='address-icon'><Icon name='pin' size={20} /></span>
+                <div>
+                  <p className='address-text'>No delivery address yet.</p>
+                  <Link to={editAddress} className='shop-btn solid small'>Add delivery address</Link>
+                </div>
+              </div>
+            )}
+
+            <div className='customer-form grid'>
               <label className='wide'>Note for us (optional)<textarea rows={2} placeholder='Delivery time, gate code…' value={note} onChange={(e) => setNote(e.target.value)} /></label>
             </div>
             <div className='pay-note'>
@@ -149,10 +170,15 @@ const Checkout = () => {
             {items.map(({ product, qty, amount }) => (
               <div className='sum-row item' key={product.id}><span>{qty} × {tr(product.name)}</span><strong>{formatPrice(amount)}</strong></div>
             ))}
-            <div className='sum-row'><span>Delivery</span><strong>{DELIVERY_CHARGE ? formatPrice(DELIVERY_CHARGE) : 'Free'}</strong></div>
-            <div className='sum-row total'><span>Total</span><strong>{formatPrice(subtotal + DELIVERY_CHARGE)}</strong></div>
+            <div className='sum-row'>
+              <span>Delivery</span>
+              <strong>{!saved ? '—' : zonesLoading ? '…' : quote.paused ? 'Not available' : charge ? formatPrice(charge) : 'Free'}</strong>
+            </div>
+            {saved && !zonesLoading && quote.note ? <p className={`delivery-hint ${quote.paused ? 'warn' : ''}`}>{quote.note}</p> : null}
+            <p className='customer-fine'><Link to={DELIVERY_INFO_LINK}>See how our delivery charges work</Link></p>
+            <div className='sum-row total'><span>Total</span><strong>{formatPrice(total)}</strong></div>
             {error ? <p className='form-error' role='alert'>{error}</p> : null}
-            <button type='submit' className='shop-btn solid block' disabled={busy}>{busy ? 'Placing your order…' : 'Place order'}</button>
+            <button type='submit' className='shop-btn solid block' disabled={busy || !saved || quote.paused}>{busy ? 'Placing your order…' : 'Place order'}</button>
             <p className='customer-fine'>By placing this order you agree to our <Link to='/terms-of-service'>Terms of Service</Link>.</p>
             <button type='button' className='link-btn center' onClick={() => navigate(CART_LINK)}>Edit cart</button>
           </aside>

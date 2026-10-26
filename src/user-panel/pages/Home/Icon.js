@@ -9,6 +9,12 @@ const PATHS = {
       <circle cx="17" cy="17.5" r="1.8" />
     </>
   ),
+  pin: (
+    <>
+      <path d="M12 21.5s7-6.1 7-11a7 7 0 1 0-14 0c0 4.9 7 11 7 11Z" />
+      <circle cx="12" cy="10.5" r="2.6" />
+    </>
+  ),
   calendar: (
     <>
       <rect x="3.5" y="5" width="17" height="15" rx="2.5" />

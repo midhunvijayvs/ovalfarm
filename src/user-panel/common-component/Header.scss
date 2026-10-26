@@ -245,3 +245,36 @@
     text-align: center;
   }
 }
+
+/* Account menu under the user icon in the header */
+.account-menu {
+  position: relative;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 160px;
+  background: #fff;
+  border: 1px solid #efe8da;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(11, 46, 13, 0.14);
+  padding: 6px;
+  z-index: 60;
+  display: grid;
+}
+
+.account-dropdown a {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #14201a;
+  text-decoration: none;
+}
+
+.account-dropdown a:hover {
+  background: #f4faf1;
+  color: #12650a;
+}

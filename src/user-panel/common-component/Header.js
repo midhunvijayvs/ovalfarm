@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import './Header.scss'
 import { NAV_LINKS, ORDER_LINK } from './navLinks'
@@ -6,7 +6,7 @@ import Icon from '../pages/Home/Icon'
 import { shopIsOnline } from '../../customer/firebase'
 import { useCart } from '../../customer/CartContext'
 import { useCustomer } from '../../customer/CustomerContext'
-import { CART_LINK, ORDERS_LINK } from '../../customer/shop'
+import { ADDRESS_LINK, CART_LINK, LOGIN_LINK, ORDERS_LINK } from '../../customer/shop'
 import '../../customer/Customer.scss'
 
 const IMAGES = process.env.REACT_APP_PUBLIC_IMAGES_URL
@@ -15,6 +15,8 @@ const Header = () => {
   const location = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setMenuOpen] = useState(false)
+  const [isAccountOpen, setAccountOpen] = useState(false)
+  const accountRef = useRef(null)
   const { count } = useCart()
   const { user } = useCustomer()
 
@@ -29,7 +31,18 @@ const Header = () => {
   // Close the mobile menu whenever the page or section changes
   useEffect(() => {
     setMenuOpen(false)
+    setAccountOpen(false)
   }, [location.pathname, location.hash])
+
+  // Close the account menu on a click elsewhere or on Escape
+  useEffect(() => {
+    if (!isAccountOpen) return undefined
+    const onClick = (event) => { if (accountRef.current && !accountRef.current.contains(event.target)) setAccountOpen(false) }
+    const onKey = (event) => { if (event.key === 'Escape') setAccountOpen(false) }
+    document.addEventListener('mousedown', onClick)
+    document.addEventListener('keydown', onKey)
+    return () => { document.removeEventListener('mousedown', onClick); document.removeEventListener('keydown', onKey) }
+  }, [isAccountOpen])
 
   // Stop the page behind the mobile menu from scrolling
   useEffect(() => {
@@ -74,9 +87,30 @@ const Header = () => {
           <div className='header-actions'>
             {shopIsOnline() ? (
               <>
-                <Link to={ORDERS_LINK} className='header-icon' aria-label={user ? 'My orders' : 'Sign in'} title={user ? 'My orders' : 'Sign in'}>
-                  <Icon name='user' size={22} />
-                </Link>
+                {user ? (
+                  <div className='account-menu' ref={accountRef}>
+                    <button
+                      type='button'
+                      className='header-icon'
+                      aria-label='My account'
+                      title='My account'
+                      aria-haspopup='true'
+                      aria-expanded={isAccountOpen}
+                      onClick={() => setAccountOpen(!isAccountOpen)}>
+                      <Icon name='user' size={22} />
+                    </button>
+                    {isAccountOpen ? (
+                      <div className='account-dropdown' role='menu'>
+                        <Link to={ORDERS_LINK} role='menuitem'>Orders</Link>
+                        <Link to={ADDRESS_LINK} role='menuitem'>Address</Link>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : (
+                  <Link to={LOGIN_LINK} className='header-icon' aria-label='Sign in' title='Sign in'>
+                    <Icon name='user' size={22} />
+                  </Link>
+                )}
                 <Link to={CART_LINK} className='header-icon' aria-label={`Cart, ${count} items`} title='Cart'>
                   <Icon name='cart' size={22} />
                   {count ? <span className='header-count'>{count > 99 ? '99+' : count}</span> : null}

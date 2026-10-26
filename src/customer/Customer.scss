@@ -691,3 +691,93 @@
   color: $green-700;
   font-weight: 600;
 }
+
+// ---------- one saved delivery address ----------
+.narrow-wrap {
+  max-width: 640px;
+}
+
+.sub-head {
+  margin: 22px 0 10px !important;
+  font-size: 16px !important;
+}
+
+.address-card {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px 16px;
+  border: 1px solid $sand;
+  border-radius: $radius-sm;
+  background: $green-50;
+
+  &.empty {
+    background: $cream;
+  }
+
+  .address-icon {
+    color: $green;
+    flex: none;
+    margin-top: 2px;
+  }
+
+  .address-text {
+    margin: 0 0 6px;
+    font-weight: 600;
+    color: $ink;
+  }
+
+  .shop-btn.small {
+    margin-top: 10px;
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}
+
+.map-link {
+  display: inline-block;
+  font-size: 14px;
+  font-weight: 600;
+  color: $green-700;
+  text-decoration: underline;
+}
+
+.map-field {
+  display: grid;
+  gap: 10px;
+
+  .shop-btn {
+    justify-self: start;
+  }
+
+  .customer-fine {
+    margin-top: 0 !important;
+    text-align: left;
+  }
+}
+
+.delivery-hint {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: $muted;
+
+  a {
+    color: $green-700;
+    font-weight: 600;
+  }
+
+  &.warn {
+    color: $orange;
+    font-weight: 600;
+  }
+}
+
+.saved-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 14px 0 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: $green-700;
+}
