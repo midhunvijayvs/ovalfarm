@@ -4,8 +4,10 @@ import Icon from '../../user-panel/pages/Home/Icon'
 import { useLanguage } from '../../i18n/LanguageContext'
 import { useProducts, formatPrice, formatPackSize, productLink, SHOP_LIST_LINK } from '../../user-panel/pages/Shop/shopHelpers'
 import { useCart } from '../CartContext'
-import { cartItems, CHECKOUT_LINK, DELIVERY_INFO_LINK } from '../shop'
-import { DELIVERY_CHARGE } from '../firebaseConfig'
+import { useCustomer } from '../CustomerContext'
+import { cartItems, CHECKOUT_LINK, DELIVERY_INFO_LINK, ADDRESS_LINK, LOGIN_LINK, CART_LINK } from '../shop'
+import { addressOf, hasAddress } from '../address'
+import { useDeliveryZones, deliveryQuote, itemWeight } from '../deliveryService'
 import '../Customer.scss'
 
 // /cart
@@ -15,6 +17,13 @@ const Cart = () => {
   const { lines, setQty, remove } = useCart()
   const items = cartItems(lines, products)
   const subtotal = items.reduce((total, item) => total + item.amount, 0)
+  // Same delivery charge as checkout: from the saved address's pincode and the order weight
+  const { user, profile } = useCustomer()
+  const { zones, isLoading: zonesLoading } = useDeliveryZones()
+  const weight = items.reduce((total, { product, qty }) => total + itemWeight(product, qty), 0)
+  const saved = !!user && hasAddress(profile)
+  const quote = saved ? deliveryQuote(zones, addressOf(profile).pincode, weight, subtotal) : null
+  const charge = (quote && quote.charge) || 0
 
   if (isLoading) return <div className='customer-page'><p className='customer-lead center'>Loading your cart…</p></div>
 
@@ -62,9 +71,15 @@ const Cart = () => {
           <aside className='customer-card summary'>
             <h2>Order summary</h2>
             <div className='sum-row'><span>Items</span><strong>{formatPrice(subtotal)}</strong></div>
-            <div className='sum-row'><span>Delivery</span><strong>{DELIVERY_CHARGE ? formatPrice(DELIVERY_CHARGE) : 'Free'}</strong></div>
+            <div className='sum-row'>
+              <span>Delivery</span>
+              <strong>{!saved ? '—' : zonesLoading ? '…' : quote.paused ? 'Not available' : charge ? formatPrice(charge) : 'Free'}</strong>
+            </div>
+            {!user ? <p className='customer-fine'><Link to={`${LOGIN_LINK}?next=${CART_LINK}`}>Sign in</Link> to see the delivery charge for your address.</p>
+              : !saved ? <p className='customer-fine'><Link to={ADDRESS_LINK}>Add your delivery address</Link> to see the delivery charge.</p>
+              : !zonesLoading && quote.note ? <p className={`delivery-hint ${quote.paused ? 'warn' : ''}`}>{quote.note}</p> : null}
             <p className='customer-fine'><Link to={DELIVERY_INFO_LINK}>See how our delivery charges work</Link></p>
-            <div className='sum-row total'><span>Total</span><strong>{formatPrice(subtotal + DELIVERY_CHARGE)}</strong></div>
+            <div className='sum-row total'><span>{saved ? 'Total' : 'Total (before delivery)'}</span><strong>{formatPrice(subtotal + charge)}</strong></div>
             <Link to={CHECKOUT_LINK} className='shop-btn solid block'>Checkout</Link>
             <Link to={SHOP_LIST_LINK} className='link-btn center'>Continue shopping</Link>
           </aside>
