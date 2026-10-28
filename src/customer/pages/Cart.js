@@ -4,7 +4,7 @@ import Icon from '../../user-panel/pages/Home/Icon'
 import { useLanguage } from '../../i18n/LanguageContext'
 import { useProducts, formatPrice, formatPackSize, productLink, SHOP_LIST_LINK } from '../../user-panel/pages/Shop/shopHelpers'
 import { useCart } from '../CartContext'
-import { cartItems, CHECKOUT_LINK } from '../shop'
+import { cartItems, CHECKOUT_LINK, DELIVERY_INFO_LINK } from '../shop'
 import { DELIVERY_CHARGE } from '../firebaseConfig'
 import '../Customer.scss'
 
@@ -63,6 +63,7 @@ const Cart = () => {
             <h2>Order summary</h2>
             <div className='sum-row'><span>Items</span><strong>{formatPrice(subtotal)}</strong></div>
             <div className='sum-row'><span>Delivery</span><strong>{DELIVERY_CHARGE ? formatPrice(DELIVERY_CHARGE) : 'Free'}</strong></div>
+            <p className='customer-fine'><Link to={DELIVERY_INFO_LINK}>See how our delivery charges work</Link></p>
             <div className='sum-row total'><span>Total</span><strong>{formatPrice(subtotal + DELIVERY_CHARGE)}</strong></div>
             <Link to={CHECKOUT_LINK} className='shop-btn solid block'>Checkout</Link>
             <Link to={SHOP_LIST_LINK} className='link-btn center'>Continue shopping</Link>
