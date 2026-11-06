@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom'
 import { collection, doc, onSnapshot, query, serverTimestamp, updateDoc, where } from 'firebase/firestore'
 import { db, orderNumber, ORDER_STATUS } from '../firebase'
 import { useCustomer } from '../CustomerContext'
+import { logActivity } from '../activityLog'
 import { formatPrice, SHOP_LIST_LINK } from '../../user-panel/pages/Shop/shopHelpers'
 import { LOGIN_LINK, ORDERS_LINK } from '../shop'
 import { SITE_INFO } from '../../siteInfo'
@@ -39,6 +40,7 @@ const MyOrders = () => {
     if (!window.confirm(`Cancel order ${orderNumber(order.id)}?`)) return
     try {
       await updateDoc(doc(db, 'orders', order.id), { status: 'cancelled', updatedAt: serverTimestamp() })
+      logActivity('Cancelled order', { what: 'orders', docId: order.id, label: orderNumber(order.id) })
     } catch (e) {
       alert(`This order can no longer be cancelled online. Please call us on ${SITE_INFO.phoneDisplay}.`)
     }
