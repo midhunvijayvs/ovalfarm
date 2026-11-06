@@ -6,6 +6,7 @@ import { useLanguage } from '../../i18n/LanguageContext'
 import { useProducts, formatPrice, formatPackSize, SHOP_LIST_LINK } from '../../user-panel/pages/Shop/shopHelpers'
 import { db, orderNumber } from '../firebase'
 import { useCustomer } from '../CustomerContext'
+import { logActivity } from '../activityLog'
 import { useCart } from '../CartContext'
 import { cartItems, CART_LINK, CHECKOUT_LINK, LOGIN_LINK, ORDERS_LINK, ADDRESS_LINK, DELIVERY_INFO_LINK } from '../shop'
 import { addressOf, addressText, hasAddress, orderAddress } from '../address'
@@ -106,6 +107,7 @@ const Checkout = () => {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       })
+      logActivity('Placed order', { what: 'orders', docId: ref.id, label: orderNumber(ref.id), note: `${items.length} item${items.length === 1 ? '' : 's'}, total ₹${total}` })
       // Remember the name and number for next time (not needed for the order itself)
       saveProfile({ name: customer.name, phone: customer.phone }).catch(() => {})
       // Show the thank-you screen before emptying the cart, or the empty cart would send them to /cart

@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react'
 import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth'
 import { collection, doc, getDocs, limit, query, setDoc, updateDoc, where, serverTimestamp } from 'firebase/firestore'
 import { auth, db } from './firebase'
+import { logActivity, setLogIdentity } from './activityLog'
 
 // The signed-in website customer and their record in the shared customers list (the same list
 // the ERP shows under Customers). Use it in any page: const { user, profile, isLoading } = useCustomer()
@@ -51,7 +52,10 @@ const loadProfile = async (signedIn) => {
   if (claimable) {
     const changes = { uid: signedIn.uid, accountStatus: 'active', lastLoginAt: serverTimestamp(), updatedAt: serverTimestamp() }
     await updateDoc(claimable.ref, changes)
-    return { ...claimable.data(), ...changes, id: claimable.id }
+    const linkedProfile = { ...claimable.data(), ...changes, id: claimable.id }
+    setLogIdentity(linkedProfile)
+    logActivity('Linked account', { what: 'customers', docId: claimable.id, label: linkedProfile.name, note: 'Matched the shop’s customer record by ' + (email ? 'email' : 'phone') })
+    return linkedProfile
   }
 
   const fresh = clean({
@@ -68,6 +72,8 @@ const loadProfile = async (signedIn) => {
     updatedAt: serverTimestamp(),
   })
   await setDoc(doc(db, 'customers', signedIn.uid), fresh)
+  setLogIdentity(fresh)
+  logActivity('Created', { what: 'customers', docId: signedIn.uid, label: fresh.name || fresh.email || fresh.phone })
   return { ...fresh, id: signedIn.uid }
 }
 
@@ -86,7 +92,9 @@ export const CustomerProvider = ({ children }) => {
         return
       }
       try {
-        setProfile(await loadProfile(signedIn))
+        const loaded = await loadProfile(signedIn)
+        setLogIdentity(loaded)
+        setProfile(loaded)
       } catch (error) {
         console.error('Could not load the customer profile', error)
       }
@@ -101,9 +109,15 @@ export const CustomerProvider = ({ children }) => {
     if (changes.phone) data.phoneE164 = phoneE164(changes.phone)
     await updateDoc(doc(db, 'customers', profile.id), clean(data))
     setProfile((current) => ({ ...(current || {}), ...data }))
+    setLogIdentity({ ...profile, ...data })
+    logActivity('Changed', { what: 'customers', docId: profile.id, label: data.name || profile.name, fields: Object.keys(data).filter((k) => k !== 'updatedAt') })
   }
 
-  const signOut = () => (auth ? firebaseSignOut(auth) : Promise.resolve())
+  const signOut = async () => {
+    if (!auth) return
+    await logActivity('Signed out')
+    await firebaseSignOut(auth)
+  }
 
   return (
     <CustomerContext.Provider value={{ user, profile, isLoading, saveProfile, signOut }}>

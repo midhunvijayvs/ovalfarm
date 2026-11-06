@@ -2,15 +2,22 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import {
   GoogleAuthProvider, RecaptchaVerifier, createUserWithEmailAndPassword, sendPasswordResetEmail,
-  signInWithEmailAndPassword, signInWithPhoneNumber, signInWithPopup, updateProfile,
+  signInWithEmailAndPassword, signInWithPhoneNumber, signInWithPopup, updateProfile, getAdditionalUserInfo,
 } from 'firebase/auth'
 import { auth, authMessage, shopIsOnline } from '../firebase'
 import { useCustomer, rememberSignUpName } from '../CustomerContext'
 import { ORDERS_LINK } from '../shop'
+import { logActivity } from '../activityLog'
 import '../Customer.scss'
 
 // /account/login?next=/checkout
 // Sign in or create an account with a mobile OTP, Google, or email and password.
+// Google and phone sign-ins create the account the first time, so say which it was
+const logSignIn = (result, how) => {
+  const info = getAdditionalUserInfo(result)
+  logActivity(info && info.isNewUser ? 'Signed up' : 'Signed in', { what: 'account', label: how })
+}
+
 const Login = () => {
   const navigate = useNavigate()
   const { search } = useLocation()
@@ -68,10 +75,16 @@ const Login = () => {
 
   const verifyOtp = (event) => {
     event.preventDefault()
-    run(() => confirmation.confirm(otp.trim()))
+    run(async () => {
+      const result = await confirmation.confirm(otp.trim())
+      logSignIn(result, 'Phone OTP')
+    })
   }
 
-  const google = () => run(() => signInWithPopup(auth, new GoogleAuthProvider()))
+  const google = () => run(async () => {
+    const result = await signInWithPopup(auth, new GoogleAuthProvider())
+    logSignIn(result, 'Google')
+  })
 
   const emailSubmit = (event) => {
     event.preventDefault()
@@ -81,8 +94,10 @@ const Login = () => {
         rememberSignUpName(name.trim())
         const created = await createUserWithEmailAndPassword(auth, email.trim(), password)
         await updateProfile(created.user, { displayName: name.trim() })
+        logActivity('Signed up', { what: 'account', label: 'Email and password' })
       } else {
         await signInWithEmailAndPassword(auth, email.trim(), password)
+        logActivity('Signed in', { what: 'account', label: 'Email and password' })
       }
     })
   }
